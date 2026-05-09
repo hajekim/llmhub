@@ -4,7 +4,7 @@ const state = {
   inputTokens: 1_000_000,
   outputTokens: 500_000,
   contextMode: 'short',
-  activeProviders: new Set(['anthropic', 'openai', 'google', 'xai', 'aws', 'gcp']),
+  activeProviders: new Set(['anthropic', 'openai', 'google', 'xai', 'aws', 'gcp', 'azure']),
   showDeprecated: false,
 };
 
@@ -15,6 +15,7 @@ const PROVIDER_COLORS = {
   xai:       { bg: 'rgba(241,250,140,0.8)', border: '#f1fa8c' },
   aws:       { bg: 'rgba(255,153,0,0.8)',   border: '#ff9900' },
   gcp:       { bg: 'rgba(110,166,255,0.8)', border: '#6ea6ff' },
+  azure:     { bg: 'rgba(77,184,255,0.8)',  border: '#4db8ff' },
 };
 
 let chartInstance = null;
@@ -64,7 +65,7 @@ function sanitize(str) {
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-const PROVIDER_LABELS = { anthropic: 'Anthropic', openai: 'OpenAI', google: 'Google', xai: 'xAI', aws: 'AWS', gcp: 'GCP' };
+const PROVIDER_LABELS = { anthropic: 'Anthropic', openai: 'OpenAI', google: 'Google', xai: 'xAI', aws: 'AWS', gcp: 'GCP', azure: 'Azure' };
 const OPEN_FAMILY_LABELS = { meta: 'Meta', mistral: 'Mistral', deepseek: 'DeepSeek', qwen: 'Qwen', gemma: 'Gemma', grok: 'Grok' };
 
 function renderTable() {
@@ -175,25 +176,34 @@ function renderOpenModelsTable() {
     if (!models.length) return '';
 
     const rows = models.map(m => {
-      const awsIn  = fmtP(m.aws?.input);
-      const awsOut = fmtP(m.aws?.output);
-      const gcpIn  = fmtP(m.gcp?.input);
-      const gcpOut = fmtP(m.gcp?.output);
+      const awsIn    = fmtP(m.aws?.input);
+      const awsOut   = fmtP(m.aws?.output);
+      const gcpIn    = fmtP(m.gcp?.input);
+      const gcpOut   = fmtP(m.gcp?.output);
+      const azureIn  = fmtP(m.azure?.input);
+      const azureOut = fmtP(m.azure?.output);
 
-      let cheaperAws = '', cheaperGcp = '';
-      if (m.aws && m.gcp) {
-        const awsTotal = m.aws.input + m.aws.output;
-        const gcpTotal = m.gcp.input + m.gcp.output;
-        if (awsTotal < gcpTotal) cheaperAws = ' style="color:var(--green);font-weight:700"';
-        else if (gcpTotal < awsTotal) cheaperGcp = ' style="color:var(--green);font-weight:700"';
+      const totals = [
+        m.aws   ? { key: 'aws',   val: m.aws.input   + m.aws.output }   : null,
+        m.gcp   ? { key: 'gcp',   val: m.gcp.input   + m.gcp.output }   : null,
+        m.azure ? { key: 'azure', val: m.azure.input + m.azure.output } : null,
+      ].filter(Boolean);
+
+      let cheapest = null;
+      if (totals.length > 1) {
+        cheapest = totals.reduce((a, b) => a.val < b.val ? a : b).key;
       }
+
+      const hi = (key) => key === cheapest ? ' style="color:var(--green);font-weight:700"' : '';
 
       return `<tr>
         <td style="font-weight:500">${sanitize(m.name)}</td>
-        <td${cheaperAws}>${awsIn}</td>
-        <td${cheaperAws}>${awsOut}</td>
-        <td${cheaperGcp}>${gcpIn}</td>
-        <td${cheaperGcp}>${gcpOut}</td>
+        <td${hi('aws')}>${awsIn}</td>
+        <td${hi('aws')}>${awsOut}</td>
+        <td${hi('gcp')}>${gcpIn}</td>
+        <td${hi('gcp')}>${gcpOut}</td>
+        <td${hi('azure')}>${azureIn}</td>
+        <td${hi('azure')}>${azureOut}</td>
       </tr>`;
     }).join('');
 
@@ -206,6 +216,8 @@ function renderOpenModelsTable() {
           <th>AWS 출력</th>
           <th>GCP 입력</th>
           <th>GCP 출력</th>
+          <th>Azure 입력</th>
+          <th>Azure 출력</th>
         </tr></thead>
         <tbody>${rows}</tbody>
       </table>
@@ -397,6 +409,10 @@ async function init() {
         if (m.gcp) state.openModelsNormalized.push({
           id: m.id + '-gcp', name: m.name + ' (GCP)', provider: 'gcp', family: m.family,
           input_price_per_mtok: m.gcp.input, output_price_per_mtok: m.gcp.output, deprecated: false,
+        });
+        if (m.azure) state.openModelsNormalized.push({
+          id: m.id + '-azure', name: m.name + ' (Azure)', provider: 'azure', family: m.family,
+          input_price_per_mtok: m.azure.input, output_price_per_mtok: m.azure.output, deprecated: false,
         });
       }
     }

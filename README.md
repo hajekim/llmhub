@@ -23,8 +23,8 @@ LLM API 가격을 한눈에 비교하는 정적 웹사이트입니다.
 - 최신 버전 모델이 상단에 정렬
 
 ### 오픈 모델 (CSP 비교)
-- AWS Bedrock과 GCP Model Garden의 서버리스 엔드포인트 가격 비교
-- 동일 모델에서 더 저렴한 CSP를 초록색으로 강조
+- AWS Bedrock · GCP Model Garden · Azure AI Foundry 서버리스 엔드포인트 가격 비교
+- 동일 모델에서 가장 저렴한 CSP를 초록색으로 강조
 
 ---
 
@@ -62,8 +62,10 @@ LLM API 가격을 한눈에 비교하는 정적 웹사이트입니다.
 | xAI | https://docs.x.ai/developers/models |
 | AWS Bedrock | https://aws.amazon.com/bedrock/pricing/ |
 | GCP Model Garden | https://cloud.google.com/gemini-enterprise-agent-platform/generative-ai/pricing |
+| Azure AI Foundry | https://azure.microsoft.com/en-us/pricing/details/ai-foundry-models |
 
 AWS 가격은 **US East (N. Virginia)** 기준. DeepSeek V3.2는 해당 리전 미제공으로 AP·EU 기준 표기.
+Azure 가격은 **Global** 기준.
 
 ---
 

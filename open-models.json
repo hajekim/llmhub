@@ -2,186 +2,213 @@
   "last_updated": "2026-05-09T00:00:00Z",
   "sources": {
     "aws": "https://aws.amazon.com/bedrock/pricing/",
-    "gcp": "https://cloud.google.com/gemini-enterprise-agent-platform/generative-ai/pricing"
+    "gcp": "https://cloud.google.com/gemini-enterprise-agent-platform/generative-ai/pricing",
+    "azure": "https://azure.microsoft.com/en-us/pricing/details/ai-foundry-models"
   },
   "notes": {
-    "aws_region": "US East (N. Virginia) 기준. 일부 모델은 다른 리전만 제공."
+    "aws_region": "US East (N. Virginia) 기준. 일부 모델은 다른 리전만 제공.",
+    "azure_tier": "Global 기준."
   },
   "models": [
     {
       "id": "llama-3-3-70b",
       "name": "Llama 3.3 70B",
       "family": "meta",
-      "aws": { "input": 0.72, "output": 0.72 },
-      "gcp": { "input": 0.72, "output": 0.72 }
+      "aws":   { "input": 0.72, "output": 0.72 },
+      "gcp":   { "input": 0.72, "output": 0.72 },
+      "azure": { "input": 0.71, "output": 0.71 }
     },
     {
       "id": "llama-4-scout",
       "name": "Llama 4 Scout 17B",
       "family": "meta",
-      "aws": { "input": 0.17, "output": 0.66 },
-      "gcp": { "input": 0.25, "output": 0.70 }
+      "aws":   { "input": 0.17, "output": 0.66 },
+      "gcp":   { "input": 0.25, "output": 0.70 },
+      "azure": null
     },
     {
       "id": "llama-4-maverick",
       "name": "Llama 4 Maverick 17B",
       "family": "meta",
-      "aws": { "input": 0.24, "output": 0.97 },
-      "gcp": { "input": 0.35, "output": 1.15 }
+      "aws":   { "input": 0.24, "output": 0.97 },
+      "gcp":   { "input": 0.35, "output": 1.15 },
+      "azure": { "input": 0.25, "output": 1.00 }
     },
     {
       "id": "mistral-small-3-1",
       "name": "Mistral Small 3.1",
       "family": "mistral",
-      "aws": null,
-      "gcp": { "input": 0.10, "output": 0.30 }
+      "aws":   null,
+      "gcp":   { "input": 0.10, "output": 0.30 },
+      "azure": null
     },
     {
       "id": "ministral-3b",
       "name": "Ministral 3B",
       "family": "mistral",
-      "aws": { "input": 0.10, "output": 0.10 },
-      "gcp": null
+      "aws":   { "input": 0.10, "output": 0.10 },
+      "gcp":   null,
+      "azure": null
     },
     {
       "id": "ministral-8b",
       "name": "Ministral 8B",
       "family": "mistral",
-      "aws": { "input": 0.15, "output": 0.15 },
-      "gcp": null
+      "aws":   { "input": 0.15, "output": 0.15 },
+      "gcp":   null,
+      "azure": null
     },
     {
       "id": "ministral-14b",
       "name": "Ministral 14B",
       "family": "mistral",
-      "aws": { "input": 0.20, "output": 0.20 },
-      "gcp": null
+      "aws":   { "input": 0.20, "output": 0.20 },
+      "gcp":   null,
+      "azure": null
     },
     {
       "id": "codestral-2",
       "name": "Codestral 2",
       "family": "mistral",
-      "aws": null,
-      "gcp": { "input": 0.30, "output": 0.90 }
+      "aws":   null,
+      "gcp":   { "input": 0.30, "output": 0.90 },
+      "azure": null
     },
     {
       "id": "magistral-small-1-2",
       "name": "Magistral Small 1.2",
       "family": "mistral",
-      "aws": { "input": 0.50, "output": 1.50 },
-      "gcp": null
+      "aws":   { "input": 0.50, "output": 1.50 },
+      "gcp":   null,
+      "azure": null
     },
     {
       "id": "mistral-medium-3",
       "name": "Mistral Medium 3",
       "family": "mistral",
-      "aws": { "input": 0.50, "output": 1.50 },
-      "gcp": { "input": 0.40, "output": 2.00 }
+      "aws":   { "input": 0.50, "output": 1.50 },
+      "gcp":   { "input": 0.40, "output": 2.00 },
+      "azure": null
     },
     {
       "id": "devstral-2-135b",
       "name": "Devstral 2 135B",
       "family": "mistral",
-      "aws": { "input": 0.40, "output": 2.00 },
-      "gcp": null
+      "aws":   { "input": 0.40, "output": 2.00 },
+      "gcp":   null,
+      "azure": null
     },
     {
       "id": "deepseek-v3-1",
       "name": "DeepSeek V3.1",
       "family": "deepseek",
-      "aws": { "input": 0.58, "output": 1.68 },
-      "gcp": { "input": 0.60, "output": 1.70 }
+      "aws":   { "input": 0.58, "output": 1.68 },
+      "gcp":   { "input": 0.60, "output": 1.70 },
+      "azure": { "input": 1.23, "output": 4.94 }
     },
     {
       "id": "deepseek-v3-2",
       "name": "DeepSeek V3.2",
       "family": "deepseek",
-      "aws": { "input": 0.62, "output": 1.85, "note": "US East 미제공, AP·EU 기준" },
-      "gcp": { "input": 0.56, "output": 1.68 }
+      "aws":   { "input": 0.62, "output": 1.85, "note": "US East 미제공, AP·EU 기준" },
+      "gcp":   { "input": 0.56, "output": 1.68 },
+      "azure": { "input": 0.58, "output": 1.68 }
     },
     {
       "id": "deepseek-r1-0528",
       "name": "DeepSeek R1",
       "family": "deepseek",
-      "aws": { "input": 1.35, "output": 5.40 },
-      "gcp": { "input": 1.35, "output": 5.40 }
+      "aws":   { "input": 1.35, "output": 5.40 },
+      "gcp":   { "input": 1.35, "output": 5.40 },
+      "azure": { "input": 1.35, "output": 5.40 }
     },
     {
       "id": "qwen3-32b",
       "name": "Qwen3 32B",
       "family": "qwen",
-      "aws": { "input": 0.15, "output": 0.60 },
-      "gcp": null
+      "aws":   { "input": 0.15, "output": 0.60 },
+      "gcp":   null,
+      "azure": null
     },
     {
       "id": "qwen3-coder-30b",
       "name": "Qwen3 Coder 30B",
       "family": "qwen",
-      "aws": { "input": 0.15, "output": 0.60 },
-      "gcp": null
+      "aws":   { "input": 0.15, "output": 0.60 },
+      "gcp":   null,
+      "azure": null
     },
     {
       "id": "qwen3-80b",
       "name": "Qwen3 80B",
       "family": "qwen",
-      "aws": null,
-      "gcp": { "input": 0.15, "output": 1.20 }
+      "aws":   null,
+      "gcp":   { "input": 0.15, "output": 1.20 },
+      "azure": null
     },
     {
       "id": "qwen3-235b",
       "name": "Qwen3 235B",
       "family": "qwen",
-      "aws": null,
-      "gcp": { "input": 0.22, "output": 0.88 }
+      "aws":   null,
+      "gcp":   { "input": 0.22, "output": 0.88 },
+      "azure": null
     },
     {
       "id": "qwen3-coder-480b",
       "name": "Qwen3 Coder 480B",
       "family": "qwen",
-      "aws": null,
-      "gcp": { "input": 0.22, "output": 1.80 }
+      "aws":   null,
+      "gcp":   { "input": 0.22, "output": 1.80 },
+      "azure": null
     },
     {
       "id": "gemma-3-4b",
       "name": "Gemma 3 4B",
       "family": "gemma",
-      "aws": { "input": 0.04, "output": 0.08 },
-      "gcp": null
+      "aws":   { "input": 0.04, "output": 0.08 },
+      "gcp":   null,
+      "azure": null
     },
     {
       "id": "gemma-3-12b",
       "name": "Gemma 3 12B",
       "family": "gemma",
-      "aws": { "input": 0.09, "output": 0.29 },
-      "gcp": null
+      "aws":   { "input": 0.09, "output": 0.29 },
+      "gcp":   null,
+      "azure": null
     },
     {
       "id": "gemma-3-27b",
       "name": "Gemma 3 27B",
       "family": "gemma",
-      "aws": { "input": 0.23, "output": 0.38 },
-      "gcp": null
+      "aws":   { "input": 0.23, "output": 0.38 },
+      "gcp":   null,
+      "azure": null
     },
     {
       "id": "gemma-4-26b",
       "name": "Gemma 4 26B",
       "family": "gemma",
-      "aws": null,
-      "gcp": { "input": 0.15, "output": 0.60 }
+      "aws":   null,
+      "gcp":   { "input": 0.15, "output": 0.60 },
+      "azure": null
     },
     {
-      "id": "grok-4-20-gcp",
+      "id": "grok-4-20",
       "name": "Grok 4.20",
       "family": "grok",
-      "aws": null,
-      "gcp": { "input": 2.00, "output": 6.00 }
+      "aws":   null,
+      "gcp":   { "input": 2.00, "output": 6.00 },
+      "azure": { "input": 2.00, "output": 6.00 }
     },
     {
-      "id": "grok-4-1-fast-gcp",
+      "id": "grok-4-1-fast",
       "name": "Grok 4.1 Fast",
       "family": "grok",
-      "aws": null,
-      "gcp": { "input": 0.20, "output": 0.50 }
+      "aws":   null,
+      "gcp":   { "input": 0.20, "output": 0.50 },
+      "azure": { "input": 0.20, "output": 0.50 }
     }
   ]
 }
