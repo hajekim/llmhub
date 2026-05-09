@@ -155,14 +155,18 @@ function renderPriceTable() {
       .sort((a, b) => (a.deprecated === b.deprecated ? a.input_price_per_mtok - b.input_price_per_mtok : a.deprecated ? 1 : -1));
 
     const rows = models.map(m => {
-      const longCtx = m.long_context
-        ? `<span class="long-ctx-note">🔺 >200K: $${m.long_context.input_price_per_mtok.toFixed(2)} / $${m.long_context.output_price_per_mtok.toFixed(2)}</span>`
+      const threshold = m.long_context ? `>${Math.round(m.long_context.threshold_tokens / 1000)}K` : '';
+      const longCtxIn = m.long_context
+        ? `<span class="long-ctx-note">🔺 ${threshold}: $${m.long_context.input_price_per_mtok.toFixed(2)}</span>`
+        : '';
+      const longCtxOut = m.long_context
+        ? `<span class="long-ctx-note">🔺 ${threshold}: $${m.long_context.output_price_per_mtok.toFixed(2)}</span>`
         : '';
       const depBadge = m.deprecated ? ' <span class="badge badge-dep">deprecated</span>' : '';
       return `<tr${m.deprecated ? ' style="opacity:.5"' : ''}>
         <td><span style="font-weight:500">${sanitize(m.name)}</span>${depBadge}</td>
-        <td>$${m.input_price_per_mtok.toFixed(3)}${longCtx}</td>
-        <td>$${m.output_price_per_mtok.toFixed(3)}${m.long_context ? `<span class="long-ctx-note">🔺 >200K: $${m.long_context.output_price_per_mtok.toFixed(2)}</span>` : ''}</td>
+        <td>$${m.input_price_per_mtok.toFixed(3)}${longCtxIn}</td>
+        <td>$${m.output_price_per_mtok.toFixed(3)}${longCtxOut}</td>
       </tr>`;
     }).join('');
 
