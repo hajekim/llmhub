@@ -170,7 +170,8 @@
     .chip-google    { background: rgba(80,250,123,.12);  color: var(--green);  border-color: rgba(80,250,123,.4);  }
     .chip-dep       { background: transparent; color: var(--comment); border-color: var(--border); }
     /* CHART */
-    .chart-wrap { position: relative; height: 180px; }
+    .card-chart { display: flex; flex-direction: column; }
+    .card-chart .chart-wrap { flex: 1; min-height: 160px; position: relative; }
     /* TABLE */
     .table-wrap { padding: 0 24px 32px; }
     .table-info {
@@ -226,7 +227,7 @@
   <div class="logo">LLM<em>Hub</em></div>
   <div class="nav-right">
     <span class="updated" id="last-updated">Updated: —</span>
-    <button class="theme-btn" id="theme-btn" onclick="toggleTheme()">☀️ Light</button>
+    <button class="theme-btn" id="theme-btn">☀️ Light</button>
   </div>
 </nav>
 
@@ -254,8 +255,8 @@
 
     <div class="card-label" style="margin-top:20px">컨텍스트 크기 (요청당)</div>
     <div class="ctx-toggle">
-      <button class="ctx-btn active" id="ctx-short" onclick="setContext('short')">● Short</button>
-      <button class="ctx-btn"        id="ctx-long"  onclick="setContext('long')">  Long</button>
+      <button class="ctx-btn active" id="ctx-short">● Short</button>
+      <button class="ctx-btn"        id="ctx-long">  Long</button>
     </div>
     <div style="font-size:10px;color:var(--comment);margin-bottom:18px">
       Gemini &gt;200k / GPT &gt;272k 초과 시 Long 요금 적용
@@ -263,12 +264,12 @@
 
     <div class="card-label">프로바이더</div>
     <div class="chip-row" id="provider-chips">
-      <span class="chip chip-anthropic" data-provider="anthropic" onclick="toggleProvider(this)">● Anthropic</span>
-      <span class="chip chip-openai"    data-provider="openai"    onclick="toggleProvider(this)">● OpenAI</span>
-      <span class="chip chip-google"    data-provider="google"    onclick="toggleProvider(this)">● Google</span>
+      <span class="chip chip-anthropic" data-provider="anthropic">● Anthropic</span>
+      <span class="chip chip-openai"    data-provider="openai">● OpenAI</span>
+      <span class="chip chip-google"    data-provider="google">● Google</span>
     </div>
     <div class="chip-row" style="margin-top:8px">
-      <span class="chip chip-dep off" id="dep-chip" onclick="toggleDeprecated(this)">Deprecated 포함</span>
+      <span class="chip chip-dep off" id="dep-chip">Deprecated 포함</span>
     </div>
   </div>
 
