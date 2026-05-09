@@ -23,10 +23,29 @@ jobs:
       - name: Scrape prices
         run: python scripts/scrape_prices.py
 
+      - name: Check for changes
+        id: changes
+        run: |
+          if [ -f price_changes.txt ]; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+            {
+              echo "summary<<EOF"
+              cat price_changes.txt
+              echo "EOF"
+            } >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: Commit if changed
+        if: steps.changes.outputs.changed == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add prices.json
-          git diff --cached --quiet || git commit -m "chore: update prices [skip ci]"
+          git commit -m "$(printf 'chore: update prices\n\n%s\n\nTEST=automated scrape' "$(cat price_changes.txt)")"
           git push
+
+      - name: Cleanup temp file
+        if: always()
+        run: rm -f price_changes.txt

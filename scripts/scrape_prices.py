@@ -170,24 +170,45 @@ def scrape_google() -> list[dict]:
     return models
 
 
-def merge(existing: dict, scraped: list[dict]) -> dict:
+def merge(existing: dict, scraped: list[dict]) -> tuple[dict, list[str]]:
     """
     스크래핑 결과를 기존 데이터와 병합.
     - 기존에 있는 모델은 가격만 업데이트 (long_context 필드 유지)
     - 새 모델은 추가
     - 스크래핑에서 사라진 모델은 유지 (수동 삭제만 가능)
+    변경 내역 문자열 리스트를 함께 반환.
     """
     existing_map = {m["id"]: m for m in existing.get("models", [])}
+    changes = []
+
     for m in scraped:
         if m["id"] in existing_map:
+            old = existing_map[m["id"]]
+            diffs = []
+            for field, label in [
+                ("input_price_per_mtok",  "입력"),
+                ("output_price_per_mtok", "출력"),
+            ]:
+                old_val = old.get(field)
+                new_val = m[field]
+                if old_val is not None and abs(old_val - new_val) > 1e-9:
+                    pct = (new_val - old_val) / old_val * 100
+                    arrow = "↑" if new_val > old_val else "↓"
+                    diffs.append(f"{label} ${old_val:.3f}→${new_val:.3f} ({arrow}{abs(pct):.1f}%)")
+            if diffs:
+                changes.append(f"  {m['name']}: {', '.join(diffs)}")
             existing_map[m["id"]].update({
-                "input_price_per_mtok": m["input_price_per_mtok"],
+                "input_price_per_mtok":  m["input_price_per_mtok"],
                 "output_price_per_mtok": m["output_price_per_mtok"],
                 "deprecated": m["deprecated"],
             })
         else:
             existing_map[m["id"]] = m
-    return {"models": list(existing_map.values())}
+            changes.append(
+                f"  {m['name']} [신규] 입력 ${m['input_price_per_mtok']:.3f} / 출력 ${m['output_price_per_mtok']:.3f}"
+            )
+
+    return {"models": list(existing_map.values())}, changes
 
 
 def main():
@@ -198,8 +219,16 @@ def main():
         print("[ERROR] 모든 스크래퍼 실패 — prices.json 유지", file=sys.stderr)
         sys.exit(1)
 
-    merged = merge(existing, scraped)
-    save(merged)
+    merged, changes = merge(existing, scraped)
+
+    if changes:
+        save(merged)
+        # 워크플로우가 읽을 변경 요약 파일 생성
+        summary_path = Path(__file__).parent.parent / "price_changes.txt"
+        summary_path.write_text("\n".join(changes), encoding="utf-8")
+        print(f"[변경] {len(changes)}건:\n" + "\n".join(changes))
+    else:
+        print("[변경 없음] prices.json 유지")
 
 
 if __name__ == "__main__":
