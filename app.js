@@ -19,6 +19,7 @@ const PROVIDER_COLORS = {
 };
 
 let chartInstance = null;
+let scatterInstance = null;
 
 function calcCost(model) {
   let inputPrice = model.input_price_per_mtok;
@@ -150,7 +151,7 @@ function switchTab(tab) {
   });
   document.getElementById('source-links-direct').style.display = tab === 'prices'      ? '' : 'none';
   document.getElementById('source-links-open').style.display   = tab === 'open-models' ? '' : 'none';
-  if (tab === 'prices') renderPriceTable();
+  if (tab === 'prices') { renderPriceScatter(); renderPriceTable(); }
   if (tab === 'open-models') renderOpenModelsTable();
 }
 
@@ -239,6 +240,71 @@ function compareModelVersions(a, b) {
     if (diff !== 0) return diff;
   }
   return a.name.localeCompare(b.name);
+}
+
+function renderPriceScatter() {
+  const canvas = document.getElementById('price-scatter-chart');
+  if (!canvas) return;
+
+  if (scatterInstance) { scatterInstance.destroy(); scatterInstance = null; }
+
+  const datasets = PROVIDER_ORDER.map(provider => {
+    const points = state.models
+      .filter(m => m.provider === provider && !m.deprecated)
+      .map(m => ({ x: m.input_price_per_mtok, y: m.output_price_per_mtok, name: m.name }));
+    if (!points.length) return null;
+    const col = PROVIDER_COLORS[provider];
+    return {
+      label: PROVIDER_NAMES[provider],
+      data: points,
+      backgroundColor: col?.bg ?? 'rgba(98,114,164,0.8)',
+      borderColor: col?.border ?? '#6272a4',
+      borderWidth: 1.5,
+      pointRadius: 7,
+      pointHoverRadius: 10,
+    };
+  }).filter(Boolean);
+
+  scatterInstance = new Chart(canvas.getContext('2d'), {
+    type: 'scatter',
+    data: { datasets },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: true,
+          labels: { color: '#6272a4', font: { size: 11 }, boxWidth: 12 },
+        },
+        tooltip: {
+          callbacks: {
+            label: ctx => {
+              const d = ctx.raw;
+              return `${d.name}  입력 $${d.x.toFixed(3)} / 출력 $${d.y.toFixed(3)}`;
+            },
+          },
+        },
+      },
+      scales: {
+        x: {
+          type: 'logarithmic',
+          title: { display: true, text: '입력 ($/MTok)', color: '#6272a4', font: { size: 11 } },
+          grid: { color: 'rgba(98,114,164,0.15)' },
+          ticks: { color: '#6272a4', font: { size: 10 },
+            callback: v => `$${v}`,
+          },
+        },
+        y: {
+          type: 'logarithmic',
+          title: { display: true, text: '출력 ($/MTok)', color: '#6272a4', font: { size: 11 } },
+          grid: { color: 'rgba(98,114,164,0.15)' },
+          ticks: { color: '#6272a4', font: { size: 10 },
+            callback: v => `$${v}`,
+          },
+        },
+      },
+    },
+  });
 }
 
 function renderPriceTable() {
