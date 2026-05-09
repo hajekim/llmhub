@@ -99,6 +99,14 @@
       "azure": null
     },
     {
+      "id": "deepseek-v3",
+      "name": "DeepSeek V3",
+      "family": "deepseek",
+      "aws":   null,
+      "gcp":   null,
+      "azure": { "input": 1.14, "output": 4.56 }
+    },
+    {
       "id": "deepseek-v3-1",
       "name": "DeepSeek V3.1",
       "family": "deepseek",
@@ -193,6 +201,38 @@
       "aws":   null,
       "gcp":   { "input": 0.15, "output": 0.60 },
       "azure": null
+    },
+    {
+      "id": "grok-3",
+      "name": "Grok 3",
+      "family": "grok",
+      "aws":   null,
+      "gcp":   null,
+      "azure": { "input": 3.00, "output": 15.00 }
+    },
+    {
+      "id": "grok-3-mini",
+      "name": "Grok 3 Mini",
+      "family": "grok",
+      "aws":   null,
+      "gcp":   null,
+      "azure": { "input": 0.25, "output": 1.27 }
+    },
+    {
+      "id": "grok-code-fast-1",
+      "name": "Grok Code Fast 1",
+      "family": "grok",
+      "aws":   null,
+      "gcp":   null,
+      "azure": { "input": 0.20, "output": 1.50 }
+    },
+    {
+      "id": "grok-4",
+      "name": "Grok 4",
+      "family": "grok",
+      "aws":   null,
+      "gcp":   null,
+      "azure": { "input": 3.00, "output": 15.00 }
     },
     {
       "id": "grok-4-20",
