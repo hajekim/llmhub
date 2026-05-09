@@ -97,6 +97,8 @@
       .table-wrap  { padding: 0 16px 24px; }
       nav { padding: 0 16px; }
       .updated { display: none; }
+      .source-links span { display: none; }
+      .tab-bar { padding: 0 12px; }
     }
     /* CARD */
     .card {
@@ -228,7 +230,7 @@
     /* SOURCE LINKS */
     .source-links {
       display: flex; align-items: center; gap: 10px;
-      padding: 16px 0 4px;
+      margin-left: auto;
       font-size: 11px; color: var(--comment);
     }
     .source-link {
@@ -243,7 +245,7 @@
     .source-link-google    { background: rgba(80,250,123,.1);  color: var(--green);  border-color: rgba(80,250,123,.4);  }
     /* TAB BAR */
     .tab-bar {
-      display: flex; gap: 0;
+      display: flex; align-items: center; gap: 0;
       background: var(--nav-bg);
       border-bottom: 1px solid var(--border);
       padding: 0 24px;
@@ -309,6 +311,12 @@
 <div class="tab-bar">
   <button class="tab-btn active" id="tab-btn-calculator">가격 계산기</button>
   <button class="tab-btn" id="tab-btn-prices">가격표</button>
+  <div class="source-links">
+    <span>가격 출처</span>
+    <a href="https://platform.claude.com/docs/en/about-claude/pricing" target="_blank" rel="noopener" class="source-link source-link-anthropic">Anthropic</a>
+    <a href="https://developers.openai.com/api/docs/pricing" target="_blank" rel="noopener" class="source-link source-link-openai">OpenAI</a>
+    <a href="https://cloud.google.com/gemini-enterprise-agent-platform/generative-ai/pricing" target="_blank" rel="noopener" class="source-link source-link-google">Google</a>
+  </div>
 </div>
 
 <div id="tab-calculator" class="tab-panel active">
@@ -367,7 +375,7 @@
 <!-- 테이블 -->
 <div class="table-wrap">
   <div class="table-info">
-    <span id="table-summary">계산 중...</span>
+    <span id="table-summary"></span>
     <span style="font-size:11px;font-weight:700;color:var(--purple)">총 비용 낮은 순 ↑</span>
   </div>
   <table>
@@ -382,13 +390,6 @@
     </thead>
     <tbody id="model-tbody"></tbody>
   </table>
-
-  <div class="source-links">
-    <span>가격 출처</span>
-    <a href="https://platform.claude.com/docs/en/about-claude/pricing" target="_blank" rel="noopener" class="source-link source-link-anthropic">Anthropic</a>
-    <a href="https://developers.openai.com/api/docs/pricing" target="_blank" rel="noopener" class="source-link source-link-openai">OpenAI</a>
-    <a href="https://cloud.google.com/gemini-enterprise-agent-platform/generative-ai/pricing" target="_blank" rel="noopener" class="source-link source-link-google">Google</a>
-  </div>
 </div>
 </div>
 
