@@ -215,6 +215,21 @@
     .badge-google    { background: rgba(80,250,123,.15);  color: var(--green);  }
     .badge-dep       { background: rgba(98,114,164,.15);  color: var(--comment); font-size: 9px; }
     .badge-long      { background: rgba(255,184,108,.15); color: var(--orange); font-size: 9px; }
+    /* CHAT BUTTON */
+    .chat-btn {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      text-decoration: none;
+      background: rgba(139,233,253,.12);
+      color: var(--cyan);
+      border: 1px solid rgba(139,233,253,.3);
+      white-space: nowrap;
+      transition: background .15s, border-color .15s;
+    }
+    .chat-btn:hover { background: rgba(139,233,253,.25); border-color: var(--cyan); }
     /* COST COLORS */
     .c-muted  { color: var(--comment); }
     .c-low    { color: var(--green);  font-weight: 700; }
@@ -386,6 +401,7 @@
         <th>입력 비용</th>
         <th>출력 비용</th>
         <th>총 비용</th>
+        <th></th>
       </tr>
     </thead>
     <tbody id="model-tbody"></tbody>

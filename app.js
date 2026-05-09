@@ -78,12 +78,16 @@ function renderTable() {
     const depBadge = m.deprecated ? ' <span class="badge" style="background:rgba(255,85,85,.15);color:#ff5555">deprecated</span>' : '';
     const depClass = m.deprecated ? ' style="opacity:0.55"' : '';
     const cc = costClass(cost.totalCost);
+    const chatBtn = m.openrouter_id
+      ? `<a class="chat-btn" href="https://openrouter.ai/chat?models=${encodeURIComponent(m.openrouter_id)}" target="_blank" rel="noopener">Chat</a>`
+      : '';
     return `<tr${depClass}>
       <td>${rankCell}</td>
       <td><span class="model-name">${sanitize(m.name)}</span>${badge}${longBadge}${depBadge}</td>
       <td class="cost-neutral">${fmt(cost.inputCost)}</td>
       <td class="cost-neutral">${fmt(cost.outputCost)}</td>
       <td class="${cc}">${fmt(cost.totalCost)}</td>
+      <td>${chatBtn}</td>
     </tr>`;
   }).join('');
 }
