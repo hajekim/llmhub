@@ -241,6 +241,59 @@
     .source-link-anthropic { background: rgba(189,147,249,.1); color: var(--purple); border-color: rgba(189,147,249,.4); }
     .source-link-openai    { background: rgba(139,233,253,.1); color: var(--cyan);   border-color: rgba(139,233,253,.4); }
     .source-link-google    { background: rgba(80,250,123,.1);  color: var(--green);  border-color: rgba(80,250,123,.4);  }
+    /* TAB BAR */
+    .tab-bar {
+      display: flex; gap: 0;
+      background: var(--nav-bg);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+    }
+    .tab-btn {
+      padding: 12px 20px;
+      background: none; border: none;
+      font-family: 'Google Sans', sans-serif;
+      font-size: 13px; font-weight: 600;
+      color: var(--comment);
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -1px;
+      transition: color .2s, border-color .2s;
+    }
+    .tab-btn:hover { color: var(--fg); }
+    .tab-btn.active { color: var(--purple); border-bottom-color: var(--purple); }
+    /* PRICE TABLE TAB */
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+    .price-table-wrap { padding: 20px 24px 32px; }
+    .provider-group { margin-bottom: 32px; }
+    .provider-heading {
+      font-size: 12px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .1em;
+      padding: 8px 14px;
+      border-radius: 8px 8px 0 0;
+      margin-bottom: 0;
+    }
+    .provider-heading-anthropic { background: rgba(189,147,249,.15); color: var(--purple); }
+    .provider-heading-openai    { background: rgba(139,233,253,.15); color: var(--cyan);   }
+    .provider-heading-google    { background: rgba(80,250,123,.15);  color: var(--green);  }
+    .price-ref-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 4px; }
+    .price-ref-table thead th {
+      padding: 9px 14px; text-align: left;
+      font-size: 10px; font-weight: 700; color: var(--comment);
+      text-transform: uppercase; letter-spacing: .08em;
+      border-bottom: 2px solid var(--border);
+      background: var(--card-bg);
+    }
+    .price-ref-table thead th:nth-child(n+2) { text-align: right; }
+    .price-ref-table tbody tr { border-bottom: 1px solid var(--border); transition: background .15s; }
+    .price-ref-table tbody tr:hover { background: var(--hover-bg); }
+    .price-ref-table td { padding: 10px 14px; vertical-align: middle; }
+    .price-ref-table td:nth-child(n+2) { text-align: right; font-family: 'Roboto Mono', monospace; font-size: 12px; }
+    .long-ctx-note { font-size: 10px; color: var(--orange); display: block; margin-top: 2px; }
+    @media (max-width: 768px) {
+      .tab-bar { padding: 0 16px; }
+      .price-table-wrap { padding: 16px 16px 24px; }
+    }
   </style>
 </head>
 <body>
@@ -253,6 +306,12 @@
   </div>
 </nav>
 
+<div class="tab-bar">
+  <button class="tab-btn active" id="tab-btn-calculator">가격 계산기</button>
+  <button class="tab-btn" id="tab-btn-prices">가격표</button>
+</div>
+
+<div id="tab-calculator" class="tab-panel active">
 <div class="top-section">
 
   <!-- 토큰 입력 카드 -->
@@ -329,6 +388,13 @@
     <a href="https://platform.claude.com/docs/en/about-claude/pricing" target="_blank" rel="noopener" class="source-link source-link-anthropic">Anthropic</a>
     <a href="https://developers.openai.com/api/docs/pricing" target="_blank" rel="noopener" class="source-link source-link-openai">OpenAI</a>
     <a href="https://cloud.google.com/gemini-enterprise-agent-platform/generative-ai/pricing" target="_blank" rel="noopener" class="source-link source-link-google">Google</a>
+  </div>
+</div>
+</div>
+
+<div id="tab-prices" class="tab-panel">
+  <div class="price-table-wrap">
+    <div id="price-ref-content"></div>
   </div>
 </div>
 

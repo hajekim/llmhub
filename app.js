@@ -131,6 +131,55 @@ function updateChart() {
   chartInstance.update();
 }
 
+function switchTab(tab) {
+  document.getElementById('tab-calculator').classList.toggle('active', tab === 'calculator');
+  document.getElementById('tab-prices').classList.toggle('active', tab === 'prices');
+  document.getElementById('tab-btn-calculator').classList.toggle('active', tab === 'calculator');
+  document.getElementById('tab-btn-prices').classList.toggle('active', tab === 'prices');
+  if (tab === 'prices') renderPriceTable();
+}
+
+const PROVIDER_ORDER = ['anthropic', 'openai', 'google'];
+const PROVIDER_NAMES = { anthropic: 'Anthropic (Claude)', openai: 'OpenAI', google: 'Google (Gemini)' };
+
+function renderPriceTable() {
+  const container = document.getElementById('price-ref-content');
+  if (!state.models.length) {
+    container.innerHTML = '<p style="color:var(--comment);padding:20px">가격 데이터를 불러오는 중...</p>';
+    return;
+  }
+
+  container.innerHTML = PROVIDER_ORDER.map(provider => {
+    const models = state.models
+      .filter(m => m.provider === provider)
+      .sort((a, b) => (a.deprecated === b.deprecated ? a.input_price_per_mtok - b.input_price_per_mtok : a.deprecated ? 1 : -1));
+
+    const rows = models.map(m => {
+      const longCtx = m.long_context
+        ? `<span class="long-ctx-note">🔺 >200K: $${m.long_context.input_price_per_mtok.toFixed(2)} / $${m.long_context.output_price_per_mtok.toFixed(2)}</span>`
+        : '';
+      const depBadge = m.deprecated ? ' <span class="badge badge-dep">deprecated</span>' : '';
+      return `<tr${m.deprecated ? ' style="opacity:.5"' : ''}>
+        <td><span style="font-weight:500">${sanitize(m.name)}</span>${depBadge}</td>
+        <td>$${m.input_price_per_mtok.toFixed(3)}${longCtx}</td>
+        <td>$${m.output_price_per_mtok.toFixed(3)}${m.long_context ? `<span class="long-ctx-note">🔺 >200K: $${m.long_context.output_price_per_mtok.toFixed(2)}</span>` : ''}</td>
+      </tr>`;
+    }).join('');
+
+    return `<div class="provider-group">
+      <div class="provider-heading provider-heading-${provider}">${sanitize(PROVIDER_NAMES[provider])}</div>
+      <table class="price-ref-table">
+        <thead><tr>
+          <th>모델</th>
+          <th>입력 / MTok</th>
+          <th>출력 / MTok</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
+  }).join('');
+}
+
 function renderAll() {
   if (!state.models.length) return;
   renderTable();
@@ -210,6 +259,10 @@ async function init() {
 
   // deprecated chip
   document.getElementById('dep-chip').addEventListener('click', toggleDeprecated);
+
+  // tab buttons
+  document.getElementById('tab-btn-calculator').addEventListener('click', () => switchTab('calculator'));
+  document.getElementById('tab-btn-prices').addEventListener('click', () => switchTab('prices'));
 
   // init chart
   initChart();
