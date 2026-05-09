@@ -47,24 +47,8 @@
       }
     },
     {
-      "id": "gemini-3-flash-preview",
-      "name": "Gemini 3 Flash Preview",
-      "provider": "google",
-      "input_price_per_mtok": 0.50,
-      "output_price_per_mtok": 3.00,
-      "deprecated": false
-    },
-    {
-      "id": "gemini-3-1-flash-lite",
-      "name": "Gemini 3.1 Flash Lite",
-      "provider": "google",
-      "input_price_per_mtok": 0.25,
-      "output_price_per_mtok": 1.50,
-      "deprecated": false
-    },
-    {
-      "id": "gemini-3-pro",
-      "name": "Gemini 3 Pro",
+      "id": "gemini-3-pro-preview",
+      "name": "Gemini 3 Pro Preview",
       "provider": "google",
       "input_price_per_mtok": 2.00,
       "output_price_per_mtok": 12.00,
