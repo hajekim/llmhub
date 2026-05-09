@@ -3,7 +3,7 @@ const state = {
   inputTokens: 1_000_000,
   outputTokens: 500_000,
   contextMode: 'short',
-  activeProviders: new Set(['anthropic', 'openai', 'google']),
+  activeProviders: new Set(['anthropic', 'openai', 'google', 'xai']),
   showDeprecated: false,
 };
 
@@ -11,6 +11,7 @@ const PROVIDER_COLORS = {
   google:    { bg: 'rgba(80,250,123,0.8)',  border: '#50fa7b' },
   openai:    { bg: 'rgba(139,233,253,0.8)', border: '#8be9fd' },
   anthropic: { bg: 'rgba(189,147,249,0.8)', border: '#bd93f9' },
+  xai:       { bg: 'rgba(241,250,140,0.8)', border: '#f1fa8c' },
 };
 
 let chartInstance = null;
@@ -60,7 +61,7 @@ function sanitize(str) {
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-const PROVIDER_LABELS = { anthropic: 'Anthropic', openai: 'OpenAI', google: 'Google' };
+const PROVIDER_LABELS = { anthropic: 'Anthropic', openai: 'OpenAI', google: 'Google', xai: 'xAI' };
 
 function renderTable() {
   const models = visibleModels()
@@ -143,8 +144,8 @@ function switchTab(tab) {
   if (tab === 'prices') renderPriceTable();
 }
 
-const PROVIDER_ORDER = ['anthropic', 'openai', 'google'];
-const PROVIDER_NAMES = { anthropic: 'Anthropic (Claude)', openai: 'OpenAI', google: 'Google (Gemini)' };
+const PROVIDER_ORDER = ['anthropic', 'openai', 'google', 'xai'];
+const PROVIDER_NAMES = { anthropic: 'Anthropic (Claude)', openai: 'OpenAI', google: 'Google (Gemini)', xai: 'xAI (Grok)' };
 
 function modelVersionKey(name) {
   const nums = name.match(/\d+(?:\.\d+)*/g);
