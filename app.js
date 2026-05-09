@@ -4,7 +4,7 @@ const state = {
   inputTokens: 1_000_000,
   outputTokens: 500_000,
   contextMode: 'short',
-  activeProviders: new Set(['anthropic', 'openai', 'google', 'xai', 'aws', 'gcp', 'azure']),
+  activeProviders: new Set(['anthropic', 'openai', 'google', 'xai']),
   showDeprecated: false,
 };
 
