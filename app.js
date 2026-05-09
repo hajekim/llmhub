@@ -147,9 +147,8 @@ function switchTab(tab) {
     document.getElementById(`tab-${t}`)?.classList.toggle('active', t === tab);
     document.getElementById(`tab-btn-${t}`)?.classList.toggle('active', t === tab);
   });
-  const isOpen = tab === 'open-models';
-  document.getElementById('source-links-direct').style.display = isOpen ? 'none' : '';
-  document.getElementById('source-links-open').style.display  = isOpen ? ''     : 'none';
+  document.getElementById('source-links-direct').style.display = tab === 'prices'      ? '' : 'none';
+  document.getElementById('source-links-open').style.display   = tab === 'open-models' ? '' : 'none';
   if (tab === 'prices') renderPriceTable();
   if (tab === 'open-models') renderOpenModelsTable();
 }
