@@ -10,11 +10,13 @@ const state = {
 function calcCost(model) {
   let inputPrice = model.input_price_per_mtok;
   let outputPrice = model.output_price_per_mtok;
-  const isLongContext = state.contextMode === 'long' && model.long_context != null;
+  const isLongContext = state.contextMode === 'long' && model.long_context != null
+    && model.long_context.input_price_per_mtok != null;
   if (isLongContext) {
     inputPrice = model.long_context.input_price_per_mtok;
     outputPrice = model.long_context.output_price_per_mtok;
   }
+  if (inputPrice == null || outputPrice == null) return null;
   const inputCost = state.inputTokens * (inputPrice / 1_000_000);
   const outputCost = state.outputTokens * (outputPrice / 1_000_000);
   return { inputCost, outputCost, totalCost: inputCost + outputCost, isLongContext };
