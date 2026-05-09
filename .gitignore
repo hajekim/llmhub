@@ -1,5 +1,43 @@
+# ── 프로젝트 전용 ──
 .superpowers/
+
+# ── Python ──
 __pycache__/
-*.pyc
-.env
+*.py[cod]
+*.pyo
+.pytest_cache/
+.mypy_cache/
 venv/
+.venv/
+env/
+*.egg-info/
+dist/
+build/
+
+# ── 환경 변수 ──
+.env
+.env.local
+.env.*.local
+
+# ── macOS ──
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# ── Windows ──
+Thumbs.db
+desktop.ini
+
+# ── 에디터 ──
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# ── 로그 ──
+*.log
+npm-debug.log*
+
+# ── 기타 ──
+node_modules/
