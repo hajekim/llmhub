@@ -276,6 +276,8 @@
     .source-link-openai    { background: rgba(139,233,253,.1); color: var(--cyan);   border-color: rgba(139,233,253,.4); }
     .source-link-google    { background: rgba(80,250,123,.1);  color: var(--green);  border-color: rgba(80,250,123,.4);  }
     .source-link-xai       { background: rgba(241,250,140,.1); color: var(--yellow); border-color: rgba(241,250,140,.4); }
+    .source-link-aws       { background: rgba(255,153,0,.1);   color: var(--aws-col); border-color: rgba(255,153,0,.4); }
+    .source-link-gcp       { background: rgba(110,166,255,.1); color: var(--gcp-col); border-color: rgba(110,166,255,.4); }
     /* TAB BAR */
     .tab-bar {
       display: flex; align-items: center; gap: 0;
@@ -362,12 +364,17 @@
   <button class="tab-btn active" id="tab-btn-calculator">가격 계산기</button>
   <button class="tab-btn" id="tab-btn-prices">가격표</button>
   <button class="tab-btn" id="tab-btn-open-models">오픈 모델</button>
-  <div class="source-links">
+  <div class="source-links" id="source-links-direct">
     <span>가격 출처</span>
     <a href="https://platform.claude.com/docs/en/about-claude/pricing" target="_blank" rel="noopener" class="source-link source-link-anthropic">Anthropic</a>
     <a href="https://developers.openai.com/api/docs/pricing" target="_blank" rel="noopener" class="source-link source-link-openai">OpenAI</a>
     <a href="https://cloud.google.com/gemini-enterprise-agent-platform/generative-ai/pricing" target="_blank" rel="noopener" class="source-link source-link-google">Google</a>
     <a href="https://docs.x.ai/developers/models" target="_blank" rel="noopener" class="source-link source-link-xai">xAI</a>
+  </div>
+  <div class="source-links" id="source-links-open" style="display:none">
+    <span>가격 출처</span>
+    <a href="https://aws.amazon.com/bedrock/pricing/" target="_blank" rel="noopener" class="source-link source-link-aws">AWS Bedrock</a>
+    <a href="https://cloud.google.com/gemini-enterprise-agent-platform/generative-ai/pricing" target="_blank" rel="noopener" class="source-link source-link-gcp">GCP Model Garden</a>
   </div>
 </div>
 
