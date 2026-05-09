@@ -81,6 +81,7 @@ function renderTable() {
 }
 
 function renderAll() {
+  if (!state.models.length) return;
   renderTable();
 }
 
@@ -125,15 +126,19 @@ function toggleDeprecated() {
 function toggleTheme() {
   const html = document.documentElement;
   const isDark = html.getAttribute('data-theme') === 'dark';
-  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  const next = isDark ? 'light' : 'dark';
+  html.setAttribute('data-theme', next);
+  localStorage.setItem('llmhub-theme', next);
   document.getElementById('theme-btn').textContent = isDark ? '🌙' : '☀️';
 }
 
 async function init() {
   // theme
+  const savedTheme = localStorage.getItem('llmhub-theme');
   const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
-  document.getElementById('theme-btn').textContent = prefersDark ? '☀️' : '🌙';
+  const theme = savedTheme ?? (prefersDark ? 'dark' : 'light');
+  document.documentElement.setAttribute('data-theme', theme);
+  document.getElementById('theme-btn').textContent = theme === 'dark' ? '☀️' : '🌙';
 
   // theme toggle
   document.getElementById('theme-btn').addEventListener('click', toggleTheme);
