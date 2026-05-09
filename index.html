@@ -26,6 +26,8 @@
       --purple:    #bd93f9;
       --red:       #ff5555;
       --yellow:    #f1fa8c;
+      --aws-col:   #ff9900;
+      --gcp-col:   #6ea6ff;
       --shadow:    0 4px 16px rgba(0,0,0,.5), 0 1px 4px rgba(0,0,0,.3);
     }
     /* ── Dracula Light ── */
@@ -45,6 +47,8 @@
       --purple:    #7c4dcc;
       --red:       #d32f2f;
       --yellow:    #8a7500;
+      --aws-col:   #c45c00;
+      --gcp-col:   #1967d2;
       --shadow:    0 2px 8px rgba(0,0,0,.1), 0 1px 3px rgba(0,0,0,.08);
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -177,6 +181,8 @@
     .chip-openai    { background: rgba(139,233,253,.12); color: var(--cyan);   border-color: rgba(139,233,253,.4); }
     .chip-google    { background: rgba(80,250,123,.12);  color: var(--green);  border-color: rgba(80,250,123,.4);  }
     .chip-xai       { background: rgba(241,250,140,.12); color: var(--yellow); border-color: rgba(241,250,140,.4); }
+    .chip-aws       { background: rgba(255,153,0,.12);   color: var(--aws-col); border-color: rgba(255,153,0,.4); }
+    .chip-gcp       { background: rgba(110,166,255,.12); color: var(--gcp-col); border-color: rgba(110,166,255,.4); }
     .chip-dep       { background: transparent; color: var(--comment); border-color: var(--border); }
     /* CHART */
     .card-chart { display: flex; flex-direction: column; }
@@ -215,6 +221,15 @@
     .badge-openai    { background: rgba(139,233,253,.15); color: var(--cyan);   }
     .badge-google    { background: rgba(80,250,123,.15);  color: var(--green);  }
     .badge-xai       { background: rgba(241,250,140,.15); color: var(--yellow); }
+    .badge-aws       { background: rgba(255,153,0,.15);   color: var(--aws-col); }
+    .badge-gcp       { background: rgba(110,166,255,.15); color: var(--gcp-col); }
+    /* Open model family badges */
+    .badge-family-meta     { background: rgba(255,184,108,.15); color: var(--orange); }
+    .badge-family-mistral  { background: rgba(255,121,198,.15); color: var(--pink);   }
+    .badge-family-deepseek { background: rgba(139,233,253,.15); color: var(--cyan);   }
+    .badge-family-qwen     { background: rgba(189,147,249,.15); color: var(--purple); }
+    .badge-family-gemma    { background: rgba(80,250,123,.15);  color: var(--green);  }
+    .badge-family-grok     { background: rgba(241,250,140,.15); color: var(--yellow); }
     .badge-dep       { background: rgba(98,114,164,.15);  color: var(--comment); font-size: 9px; }
     .badge-long      { background: rgba(255,184,108,.15); color: var(--orange); font-size: 9px; }
     /* CHAT BUTTON */
@@ -394,6 +409,11 @@
       <span class="chip chip-openai"    data-provider="openai">● OpenAI</span>
       <span class="chip chip-google"    data-provider="google">● Google</span>
       <span class="chip chip-xai"       data-provider="xai">● xAI</span>
+    </div>
+    <div class="card-label" style="margin-top:16px">오픈 모델 (CSP)</div>
+    <div class="chip-row">
+      <span class="chip chip-aws" data-provider="aws">● AWS Bedrock</span>
+      <span class="chip chip-gcp" data-provider="gcp">● GCP Model Garden</span>
     </div>
     <div class="chip-row" style="margin-top:8px">
       <span class="chip chip-dep chip-off" id="dep-chip">Deprecated 포함</span>

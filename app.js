@@ -1,9 +1,10 @@
 const state = {
   models: [],
+  openModelsNormalized: [],
   inputTokens: 1_000_000,
   outputTokens: 500_000,
   contextMode: 'short',
-  activeProviders: new Set(['anthropic', 'openai', 'google', 'xai']),
+  activeProviders: new Set(['anthropic', 'openai', 'google', 'xai', 'aws', 'gcp']),
   showDeprecated: false,
 };
 
@@ -12,6 +13,8 @@ const PROVIDER_COLORS = {
   openai:    { bg: 'rgba(139,233,253,0.8)', border: '#8be9fd' },
   anthropic: { bg: 'rgba(189,147,249,0.8)', border: '#bd93f9' },
   xai:       { bg: 'rgba(241,250,140,0.8)', border: '#f1fa8c' },
+  aws:       { bg: 'rgba(255,153,0,0.8)',   border: '#ff9900' },
+  gcp:       { bg: 'rgba(110,166,255,0.8)', border: '#6ea6ff' },
 };
 
 let chartInstance = null;
@@ -48,7 +51,7 @@ function costClass(total) {
 }
 
 function visibleModels() {
-  return state.models.filter(m => {
+  return [...state.models, ...state.openModelsNormalized].filter(m => {
     if (!state.showDeprecated && m.deprecated) return false;
     if (!state.activeProviders.has(m.provider)) return false;
     return true;
@@ -61,7 +64,8 @@ function sanitize(str) {
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-const PROVIDER_LABELS = { anthropic: 'Anthropic', openai: 'OpenAI', google: 'Google', xai: 'xAI' };
+const PROVIDER_LABELS = { anthropic: 'Anthropic', openai: 'OpenAI', google: 'Google', xai: 'xAI', aws: 'AWS', gcp: 'GCP' };
+const OPEN_FAMILY_LABELS = { meta: 'Meta', mistral: 'Mistral', deepseek: 'DeepSeek', qwen: 'Qwen', gemma: 'Google', grok: 'xAI' };
 
 function renderTable() {
   const models = visibleModels()
@@ -74,7 +78,9 @@ function renderTable() {
     const rankCell = i < 3
       ? `<span class="rank rank-${['gold','silver','bronze'][i]}">${RANK_MEDALS[i]}</span>`
       : `<span class="rank">${i + 1}</span>`;
-    const badge = `<span class="badge badge-${m.provider}">${sanitize(PROVIDER_LABELS[m.provider] ?? m.provider)}</span>`;
+    const badge = m.family
+      ? `<span class="badge badge-family-${m.family}">${sanitize(OPEN_FAMILY_LABELS[m.family] ?? m.family)}</span>`
+      : `<span class="badge badge-${m.provider}">${sanitize(PROVIDER_LABELS[m.provider] ?? m.provider)}</span>`;
     const longBadge = cost.isLongContext ? ' <span class="badge" style="background:rgba(255,184,108,.2);color:#ffb86c">🔺 Long</span>' : '';
     const depBadge = m.deprecated ? ' <span class="badge" style="background:rgba(255,85,85,.15);color:#ff5555">deprecated</span>' : '';
     const depClass = m.deprecated ? ' style="opacity:0.55"' : '';
@@ -369,17 +375,30 @@ async function init() {
       fetch('open-models.json'),
     ]);
     if (!pricesRes.ok) throw new Error(`HTTP ${pricesRes.status}`);
-    const data = await pricesRes.json();
+    const [data, openData] = await Promise.all([
+      pricesRes.json(),
+      openRes.ok ? openRes.json() : Promise.resolve(null),
+    ]);
     state.models = data.models;
     document.getElementById('last-updated').textContent = '가격 기준일: ' + data.last_updated.slice(0, 10);
     document.getElementById('input-display').textContent = fmtNum(state.inputTokens);
     document.getElementById('output-display').textContent = fmtNum(state.outputTokens);
-    renderAll();
 
-    if (openRes.ok) {
-      const openData = await openRes.json();
+    if (openData) {
       openModels = openData.models;
+      state.openModelsNormalized = [];
+      for (const m of openData.models) {
+        if (m.aws) state.openModelsNormalized.push({
+          id: m.id + '-aws', name: m.name + ' (AWS)', provider: 'aws', family: m.family,
+          input_price_per_mtok: m.aws.input, output_price_per_mtok: m.aws.output, deprecated: false,
+        });
+        if (m.gcp) state.openModelsNormalized.push({
+          id: m.id + '-gcp', name: m.name + ' (GCP)', provider: 'gcp', family: m.family,
+          input_price_per_mtok: m.gcp.input, output_price_per_mtok: m.gcp.output, deprecated: false,
+        });
+      }
     }
+    renderAll();
   } catch (e) {
     const tbody = document.getElementById('model-tbody');
     if (tbody) tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:24px;color:#ff5555">가격 데이터를 불러오지 못했습니다. (${sanitize(e.message)})</td></tr>`;
