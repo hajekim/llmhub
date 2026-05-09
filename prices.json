@@ -8,7 +8,8 @@
       "input_price_per_mtok": 0.075,
       "output_price_per_mtok": 0.30,
       "deprecated": false,
-      "openrouter_id": "google/gemini-2.0-flash-lite-001"
+      "openrouter_id": "google/gemini-2.0-flash-lite-001",
+      "shutdown_date": "2026-06-01"
     },
     {
       "id": "gemini-2-0-flash",
@@ -17,7 +18,8 @@
       "input_price_per_mtok": 0.15,
       "output_price_per_mtok": 0.60,
       "deprecated": false,
-      "openrouter_id": "google/gemini-2.0-flash-001"
+      "openrouter_id": "google/gemini-2.0-flash-001",
+      "shutdown_date": "2026-06-01"
     },
     {
       "id": "gemini-2-5-flash-lite",
@@ -26,7 +28,8 @@
       "input_price_per_mtok": 0.10,
       "output_price_per_mtok": 0.40,
       "deprecated": false,
-      "openrouter_id": "google/gemini-2.5-flash-lite"
+      "openrouter_id": "google/gemini-2.5-flash-lite",
+      "shutdown_date": "2026-10-16"
     },
     {
       "id": "gemini-3-1-flash-lite",
@@ -44,7 +47,8 @@
       "input_price_per_mtok": 0.30,
       "output_price_per_mtok": 2.50,
       "deprecated": false,
-      "openrouter_id": "google/gemini-2.5-flash"
+      "openrouter_id": "google/gemini-2.5-flash",
+      "shutdown_date": "2026-10-16"
     },
     {
       "id": "gemini-3-flash-preview",
@@ -63,6 +67,7 @@
       "output_price_per_mtok": 10.00,
       "deprecated": false,
       "openrouter_id": "google/gemini-2.5-pro",
+      "shutdown_date": "2026-10-16",
       "long_context": {
         "threshold_tokens": 200000,
         "input_price_per_mtok": 2.50,
@@ -177,7 +182,8 @@
       "input_price_per_mtok": 0.25,
       "output_price_per_mtok": 1.25,
       "deprecated": false,
-      "openrouter_id": "anthropic/claude-3-haiku"
+      "openrouter_id": "anthropic/claude-3-haiku",
+      "shutdown_date": "2026-04-20"
     },
     {
       "id": "claude-haiku-3-5",
@@ -186,7 +192,8 @@
       "input_price_per_mtok": 0.80,
       "output_price_per_mtok": 4.00,
       "deprecated": false,
-      "openrouter_id": "anthropic/claude-3.5-haiku"
+      "openrouter_id": "anthropic/claude-3.5-haiku",
+      "shutdown_date": "2026-02-19"
     },
     {
       "id": "claude-haiku-4-5",
@@ -195,7 +202,8 @@
       "input_price_per_mtok": 1.00,
       "output_price_per_mtok": 5.00,
       "deprecated": false,
-      "openrouter_id": "anthropic/claude-haiku-4.5"
+      "openrouter_id": "anthropic/claude-haiku-4.5",
+      "shutdown_date": "2026-10-15"
     },
     {
       "id": "claude-sonnet-4",
@@ -204,7 +212,8 @@
       "input_price_per_mtok": 3.00,
       "output_price_per_mtok": 15.00,
       "deprecated": false,
-      "openrouter_id": "anthropic/claude-sonnet-4"
+      "openrouter_id": "anthropic/claude-sonnet-4",
+      "shutdown_date": "2026-06-15"
     },
     {
       "id": "claude-sonnet-4-5",
@@ -213,7 +222,8 @@
       "input_price_per_mtok": 3.00,
       "output_price_per_mtok": 15.00,
       "deprecated": false,
-      "openrouter_id": "anthropic/claude-sonnet-4.5"
+      "openrouter_id": "anthropic/claude-sonnet-4.5",
+      "shutdown_date": "2026-09-29"
     },
     {
       "id": "claude-sonnet-4-6",
@@ -222,7 +232,8 @@
       "input_price_per_mtok": 3.00,
       "output_price_per_mtok": 15.00,
       "deprecated": false,
-      "openrouter_id": "anthropic/claude-sonnet-4.6"
+      "openrouter_id": "anthropic/claude-sonnet-4.6",
+      "shutdown_date": "2027-02-17"
     },
     {
       "id": "claude-opus-4-5",
@@ -231,7 +242,8 @@
       "input_price_per_mtok": 5.00,
       "output_price_per_mtok": 25.00,
       "deprecated": false,
-      "openrouter_id": "anthropic/claude-opus-4.5"
+      "openrouter_id": "anthropic/claude-opus-4.5",
+      "shutdown_date": "2026-11-24"
     },
     {
       "id": "claude-opus-4-6",
@@ -240,7 +252,8 @@
       "input_price_per_mtok": 5.00,
       "output_price_per_mtok": 25.00,
       "deprecated": false,
-      "openrouter_id": "anthropic/claude-opus-4.6"
+      "openrouter_id": "anthropic/claude-opus-4.6",
+      "shutdown_date": "2027-02-05"
     },
     {
       "id": "claude-opus-4-7",
@@ -249,7 +262,8 @@
       "input_price_per_mtok": 5.00,
       "output_price_per_mtok": 25.00,
       "deprecated": false,
-      "openrouter_id": "anthropic/claude-opus-4.7"
+      "openrouter_id": "anthropic/claude-opus-4.7",
+      "shutdown_date": "2027-04-16"
     },
     {
       "id": "claude-sonnet-3-7",
@@ -258,7 +272,8 @@
       "input_price_per_mtok": 3.00,
       "output_price_per_mtok": 15.00,
       "deprecated": true,
-      "openrouter_id": "anthropic/claude-3.7-sonnet"
+      "openrouter_id": "anthropic/claude-3.7-sonnet",
+      "shutdown_date": "2026-02-19"
     },
     {
       "id": "claude-opus-4",
@@ -267,7 +282,8 @@
       "input_price_per_mtok": 15.00,
       "output_price_per_mtok": 75.00,
       "deprecated": true,
-      "openrouter_id": "anthropic/claude-opus-4"
+      "openrouter_id": "anthropic/claude-opus-4",
+      "shutdown_date": "2026-06-15"
     },
     {
       "id": "claude-opus-4-1",
@@ -276,7 +292,8 @@
       "input_price_per_mtok": 15.00,
       "output_price_per_mtok": 75.00,
       "deprecated": true,
-      "openrouter_id": "anthropic/claude-opus-4.1"
+      "openrouter_id": "anthropic/claude-opus-4.1",
+      "shutdown_date": "2026-08-05"
     },
     {
       "id": "claude-opus-3",
@@ -285,7 +302,8 @@
       "input_price_per_mtok": 15.00,
       "output_price_per_mtok": 75.00,
       "deprecated": true,
-      "openrouter_id": "anthropic/claude-3-opus"
+      "openrouter_id": "anthropic/claude-3-opus",
+      "shutdown_date": "2026-01-05"
     }
   ]
 }

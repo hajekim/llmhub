@@ -146,6 +146,22 @@ function switchTab(tab) {
 const PROVIDER_ORDER = ['anthropic', 'openai', 'google'];
 const PROVIDER_NAMES = { anthropic: 'Anthropic (Claude)', openai: 'OpenAI', google: 'Google (Gemini)' };
 
+function modelVersionKey(name) {
+  const nums = name.match(/\d+(?:\.\d+)*/g);
+  if (!nums) return [0];
+  return nums[0].split('.').map(Number);
+}
+
+function compareModelVersions(a, b) {
+  const va = modelVersionKey(a.name);
+  const vb = modelVersionKey(b.name);
+  for (let i = 0; i < Math.max(va.length, vb.length); i++) {
+    const diff = (vb[i] || 0) - (va[i] || 0);
+    if (diff !== 0) return diff;
+  }
+  return a.name.localeCompare(b.name);
+}
+
 function renderPriceTable() {
   const container = document.getElementById('price-ref-content');
   if (!state.models.length) {
@@ -156,7 +172,7 @@ function renderPriceTable() {
   container.innerHTML = PROVIDER_ORDER.map(provider => {
     const models = state.models
       .filter(m => m.provider === provider)
-      .sort((a, b) => (a.deprecated === b.deprecated ? a.input_price_per_mtok - b.input_price_per_mtok : a.deprecated ? 1 : -1));
+      .sort((a, b) => a.deprecated !== b.deprecated ? (a.deprecated ? 1 : -1) : compareModelVersions(a, b));
 
     const rows = models.map(m => {
       const depBadge = m.deprecated ? ' <span class="badge badge-dep">deprecated</span>' : '';
@@ -167,11 +183,19 @@ function renderPriceTable() {
           + `<span class="long-ctx-note">입력 $${m.long_context.input_price_per_mtok.toFixed(2)}</span>`
           + `<span class="long-ctx-note">출력 $${m.long_context.output_price_per_mtok.toFixed(2)}</span>`;
       }
+      const today = new Date().toISOString().slice(0, 10);
+      let shutdownCell = '<span style="color:var(--comment)">—</span>';
+      if (m.shutdown_date) {
+        const isPast = m.shutdown_date < today;
+        const color = isPast ? 'var(--red)' : (m.shutdown_date < today.slice(0, 4) + '-12-31' ? 'var(--orange)' : 'var(--comment)');
+        shutdownCell = `<span style="color:${color};font-weight:${isPast ? '700' : '400'}">${m.shutdown_date}</span>`;
+      }
       return `<tr${m.deprecated ? ' style="opacity:.5"' : ''}>
         <td><span style="font-weight:500">${sanitize(m.name)}</span>${depBadge}</td>
         <td>$${m.input_price_per_mtok.toFixed(3)}</td>
         <td>$${m.output_price_per_mtok.toFixed(3)}</td>
         <td>${longCtxCell}</td>
+        <td>${shutdownCell}</td>
       </tr>`;
     }).join('');
 
@@ -183,6 +207,7 @@ function renderPriceTable() {
           <th>입력 / MTok</th>
           <th>출력 / MTok</th>
           <th>Long Context</th>
+          <th>Shutdown</th>
         </tr></thead>
         <tbody>${rows}</tbody>
       </table>
