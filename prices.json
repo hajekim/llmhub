@@ -1,0 +1,231 @@
+{
+  "last_updated": "2026-05-09T00:00:00Z",
+  "models": [
+    {
+      "id": "gemini-2-0-flash-lite",
+      "name": "Gemini 2.0 Flash Lite",
+      "provider": "google",
+      "input_price_per_mtok": 0.075,
+      "output_price_per_mtok": 0.30,
+      "deprecated": false
+    },
+    {
+      "id": "gemini-2-0-flash",
+      "name": "Gemini 2.0 Flash",
+      "provider": "google",
+      "input_price_per_mtok": 0.15,
+      "output_price_per_mtok": 0.60,
+      "deprecated": false
+    },
+    {
+      "id": "gemini-2-5-flash-lite",
+      "name": "Gemini 2.5 Flash Lite",
+      "provider": "google",
+      "input_price_per_mtok": 0.10,
+      "output_price_per_mtok": 0.40,
+      "deprecated": false
+    },
+    {
+      "id": "gemini-2-5-flash",
+      "name": "Gemini 2.5 Flash",
+      "provider": "google",
+      "input_price_per_mtok": 0.30,
+      "output_price_per_mtok": 2.50,
+      "deprecated": false,
+      "long_context": {
+        "threshold_tokens": 200000,
+        "input_price_per_mtok": 0.60,
+        "output_price_per_mtok": 5.00
+      }
+    },
+    {
+      "id": "gemini-2-5-pro",
+      "name": "Gemini 2.5 Pro",
+      "provider": "google",
+      "input_price_per_mtok": 1.25,
+      "output_price_per_mtok": 10.00,
+      "deprecated": false,
+      "long_context": {
+        "threshold_tokens": 200000,
+        "input_price_per_mtok": 2.50,
+        "output_price_per_mtok": 10.00
+      }
+    },
+    {
+      "id": "gemini-3-flash-preview",
+      "name": "Gemini 3 Flash Preview",
+      "provider": "google",
+      "input_price_per_mtok": 0.50,
+      "output_price_per_mtok": 3.00,
+      "deprecated": false
+    },
+    {
+      "id": "gemini-3-1-flash-lite",
+      "name": "Gemini 3.1 Flash Lite",
+      "provider": "google",
+      "input_price_per_mtok": 0.25,
+      "output_price_per_mtok": 1.50,
+      "deprecated": false
+    },
+    {
+      "id": "gemini-3-pro",
+      "name": "Gemini 3 Pro",
+      "provider": "google",
+      "input_price_per_mtok": 2.00,
+      "output_price_per_mtok": 12.00,
+      "deprecated": false
+    },
+    {
+      "id": "gemini-3-1-pro-preview",
+      "name": "Gemini 3.1 Pro Preview",
+      "provider": "google",
+      "input_price_per_mtok": 2.00,
+      "output_price_per_mtok": 12.00,
+      "deprecated": false
+    },
+    {
+      "id": "gpt-5-4-nano",
+      "name": "GPT-5.4 Nano",
+      "provider": "openai",
+      "input_price_per_mtok": 0.20,
+      "output_price_per_mtok": 1.25,
+      "deprecated": false
+    },
+    {
+      "id": "gpt-5-4-mini",
+      "name": "GPT-5.4 Mini",
+      "provider": "openai",
+      "input_price_per_mtok": 0.75,
+      "output_price_per_mtok": 4.50,
+      "deprecated": false
+    },
+    {
+      "id": "gpt-5-4",
+      "name": "GPT-5.4",
+      "provider": "openai",
+      "input_price_per_mtok": 2.50,
+      "output_price_per_mtok": 15.00,
+      "deprecated": false
+    },
+    {
+      "id": "gpt-5-5",
+      "name": "GPT-5.5",
+      "provider": "openai",
+      "input_price_per_mtok": 5.00,
+      "output_price_per_mtok": 30.00,
+      "deprecated": false
+    },
+    {
+      "id": "gpt-5-4-pro",
+      "name": "GPT-5.4 Pro",
+      "provider": "openai",
+      "input_price_per_mtok": 30.00,
+      "output_price_per_mtok": 180.00,
+      "deprecated": false
+    },
+    {
+      "id": "claude-haiku-3",
+      "name": "Claude Haiku 3",
+      "provider": "anthropic",
+      "input_price_per_mtok": 0.25,
+      "output_price_per_mtok": 1.25,
+      "deprecated": false
+    },
+    {
+      "id": "claude-haiku-3-5",
+      "name": "Claude Haiku 3.5",
+      "provider": "anthropic",
+      "input_price_per_mtok": 0.80,
+      "output_price_per_mtok": 4.00,
+      "deprecated": false
+    },
+    {
+      "id": "claude-haiku-4-5",
+      "name": "Claude Haiku 4.5",
+      "provider": "anthropic",
+      "input_price_per_mtok": 1.00,
+      "output_price_per_mtok": 5.00,
+      "deprecated": false
+    },
+    {
+      "id": "claude-sonnet-4",
+      "name": "Claude Sonnet 4",
+      "provider": "anthropic",
+      "input_price_per_mtok": 3.00,
+      "output_price_per_mtok": 15.00,
+      "deprecated": false
+    },
+    {
+      "id": "claude-sonnet-4-5",
+      "name": "Claude Sonnet 4.5",
+      "provider": "anthropic",
+      "input_price_per_mtok": 3.00,
+      "output_price_per_mtok": 15.00,
+      "deprecated": false
+    },
+    {
+      "id": "claude-sonnet-4-6",
+      "name": "Claude Sonnet 4.6",
+      "provider": "anthropic",
+      "input_price_per_mtok": 3.00,
+      "output_price_per_mtok": 15.00,
+      "deprecated": false
+    },
+    {
+      "id": "claude-opus-4-5",
+      "name": "Claude Opus 4.5",
+      "provider": "anthropic",
+      "input_price_per_mtok": 5.00,
+      "output_price_per_mtok": 25.00,
+      "deprecated": false
+    },
+    {
+      "id": "claude-opus-4-6",
+      "name": "Claude Opus 4.6",
+      "provider": "anthropic",
+      "input_price_per_mtok": 5.00,
+      "output_price_per_mtok": 25.00,
+      "deprecated": false
+    },
+    {
+      "id": "claude-opus-4-7",
+      "name": "Claude Opus 4.7",
+      "provider": "anthropic",
+      "input_price_per_mtok": 5.00,
+      "output_price_per_mtok": 25.00,
+      "deprecated": false
+    },
+    {
+      "id": "claude-sonnet-3-7",
+      "name": "Claude Sonnet 3.7",
+      "provider": "anthropic",
+      "input_price_per_mtok": 3.00,
+      "output_price_per_mtok": 15.00,
+      "deprecated": true
+    },
+    {
+      "id": "claude-opus-4",
+      "name": "Claude Opus 4",
+      "provider": "anthropic",
+      "input_price_per_mtok": 15.00,
+      "output_price_per_mtok": 75.00,
+      "deprecated": true
+    },
+    {
+      "id": "claude-opus-4-1",
+      "name": "Claude Opus 4.1",
+      "provider": "anthropic",
+      "input_price_per_mtok": 15.00,
+      "output_price_per_mtok": 75.00,
+      "deprecated": true
+    },
+    {
+      "id": "claude-opus-3",
+      "name": "Claude Opus 3",
+      "provider": "anthropic",
+      "input_price_per_mtok": 15.00,
+      "output_price_per_mtok": 75.00,
+      "deprecated": true
+    }
+  ]
+}
