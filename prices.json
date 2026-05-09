@@ -31,12 +31,7 @@
       "provider": "google",
       "input_price_per_mtok": 0.30,
       "output_price_per_mtok": 2.50,
-      "deprecated": false,
-      "long_context": {
-        "threshold_tokens": 200000,
-        "input_price_per_mtok": 0.60,
-        "output_price_per_mtok": 5.00
-      }
+      "deprecated": false
     },
     {
       "id": "gemini-2-5-pro",
@@ -48,7 +43,7 @@
       "long_context": {
         "threshold_tokens": 200000,
         "input_price_per_mtok": 2.50,
-        "output_price_per_mtok": 10.00
+        "output_price_per_mtok": 15.00
       }
     },
     {
@@ -73,7 +68,12 @@
       "provider": "google",
       "input_price_per_mtok": 2.00,
       "output_price_per_mtok": 12.00,
-      "deprecated": false
+      "deprecated": false,
+      "long_context": {
+        "threshold_tokens": 200000,
+        "input_price_per_mtok": 4.00,
+        "output_price_per_mtok": 18.00
+      }
     },
     {
       "id": "gemini-3-1-pro-preview",
@@ -81,7 +81,12 @@
       "provider": "google",
       "input_price_per_mtok": 2.00,
       "output_price_per_mtok": 12.00,
-      "deprecated": false
+      "deprecated": false,
+      "long_context": {
+        "threshold_tokens": 200000,
+        "input_price_per_mtok": 4.00,
+        "output_price_per_mtok": 18.00
+      }
     },
     {
       "id": "gpt-5-4-nano",
@@ -97,6 +102,14 @@
       "provider": "openai",
       "input_price_per_mtok": 0.75,
       "output_price_per_mtok": 4.50,
+      "deprecated": false
+    },
+    {
+      "id": "gpt-5-3-codex",
+      "name": "GPT-5.3 Codex",
+      "provider": "openai",
+      "input_price_per_mtok": 1.75,
+      "output_price_per_mtok": 14.00,
       "deprecated": false
     },
     {
@@ -118,6 +131,14 @@
     {
       "id": "gpt-5-4-pro",
       "name": "GPT-5.4 Pro",
+      "provider": "openai",
+      "input_price_per_mtok": 30.00,
+      "output_price_per_mtok": 180.00,
+      "deprecated": false
+    },
+    {
+      "id": "gpt-5-5-pro",
+      "name": "GPT-5.5 Pro",
       "provider": "openai",
       "input_price_per_mtok": 30.00,
       "output_price_per_mtok": 180.00,

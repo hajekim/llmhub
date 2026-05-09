@@ -225,6 +225,22 @@
     .r3 { color: var(--orange); }
     /* DEPRECATED ROW */
     tr.dep-row { opacity: .5; }
+    /* SOURCE LINKS */
+    .source-links {
+      display: flex; align-items: center; gap: 10px;
+      padding: 16px 0 4px;
+      font-size: 11px; color: var(--comment);
+    }
+    .source-link {
+      padding: 3px 10px; border-radius: 12px;
+      font-size: 11px; font-weight: 700;
+      border: 1.5px solid; text-decoration: none;
+      transition: opacity .2s;
+    }
+    .source-link:hover { opacity: .75; }
+    .source-link-anthropic { background: rgba(189,147,249,.1); color: var(--purple); border-color: rgba(189,147,249,.4); }
+    .source-link-openai    { background: rgba(139,233,253,.1); color: var(--cyan);   border-color: rgba(139,233,253,.4); }
+    .source-link-google    { background: rgba(80,250,123,.1);  color: var(--green);  border-color: rgba(80,250,123,.4);  }
   </style>
 </head>
 <body>
@@ -307,6 +323,13 @@
     </thead>
     <tbody id="model-tbody"></tbody>
   </table>
+
+  <div class="source-links">
+    <span>가격 출처</span>
+    <a href="https://platform.claude.com/docs/en/about-claude/pricing" target="_blank" rel="noopener" class="source-link source-link-anthropic">Anthropic</a>
+    <a href="https://developers.openai.com/api/docs/pricing" target="_blank" rel="noopener" class="source-link source-link-openai">OpenAI</a>
+    <a href="https://cloud.google.com/gemini-enterprise-agent-platform/generative-ai/pricing" target="_blank" rel="noopener" class="source-link source-link-google">Google</a>
+  </div>
 </div>
 
 <script src="app.js"></script>
