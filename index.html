@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LLMHub — LLM API 가격 비교</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    /* ── Dracula Dark ── */
+    :root, [data-theme="dark"] {
+      --page-bg:   #191a21;
+      --nav-bg:    #21222c;
+      --card-bg:   #282a36;
+      --input-bg:  #21222c;
+      --hover-bg:  #3a3c4e;
+      --border:    #44475a;
+      --fg:        #f8f8f2;
+      --comment:   #6272a4;
+      --cyan:      #8be9fd;
+      --green:     #50fa7b;
+      --orange:    #ffb86c;
+      --pink:      #ff79c6;
+      --purple:    #bd93f9;
+      --red:       #ff5555;
+      --yellow:    #f1fa8c;
+      --shadow:    0 4px 16px rgba(0,0,0,.5), 0 1px 4px rgba(0,0,0,.3);
+    }
+    /* ── Dracula Light ── */
+    [data-theme="light"] {
+      --page-bg:   #f2f2f7;
+      --nav-bg:    #ffffff;
+      --card-bg:   #ffffff;
+      --input-bg:  #f2f2f7;
+      --hover-bg:  #e8e8f0;
+      --border:    #e0e0ea;
+      --fg:        #282a36;
+      --comment:   #6272a4;
+      --cyan:      #0097b2;
+      --green:     #1fa34a;
+      --orange:    #c46f00;
+      --pink:      #c0006a;
+      --purple:    #7c4dcc;
+      --red:       #d32f2f;
+      --yellow:    #8a7500;
+      --shadow:    0 2px 8px rgba(0,0,0,.1), 0 1px 3px rgba(0,0,0,.08);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Google Sans', -apple-system, sans-serif;
+      background: var(--page-bg);
+      color: var(--fg);
+      min-height: 100vh;
+      transition: background .3s, color .3s;
+    }
+    /* NAV */
+    nav {
+      background: var(--nav-bg);
+      border-bottom: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      padding: 0 24px;
+      height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky; top: 0; z-index: 10;
+    }
+    .logo { font-size: 19px; font-weight: 700; color: var(--fg); letter-spacing: -.5px; }
+    .logo em { color: var(--purple); font-style: normal; }
+    .nav-right { display: flex; align-items: center; gap: 14px; }
+    .updated { font-size: 11px; color: var(--comment); }
+    .theme-btn {
+      background: var(--input-bg);
+      border: 1.5px solid var(--border);
+      border-radius: 20px;
+      padding: 5px 14px;
+      cursor: pointer;
+      font-size: 12px; font-weight: 600;
+      color: var(--comment);
+      font-family: 'Google Sans', sans-serif;
+      transition: border-color .2s, color .2s;
+    }
+    .theme-btn:hover { border-color: var(--purple); color: var(--purple); }
+    /* LAYOUT */
+    .top-section {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 16px;
+      padding: 20px 24px;
+    }
+    @media (max-width: 768px) {
+      .top-section { grid-template-columns: 1fr; padding: 12px 16px; }
+      .card-input  { order: 1; }
+      .card-chart  { order: 2; }
+      .table-wrap  { padding: 0 16px 24px; }
+      nav { padding: 0 16px; }
+      .updated { display: none; }
+    }
+    /* CARD */
+    .card {
+      background: var(--card-bg);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      padding: 22px;
+      border: 1px solid var(--border);
+    }
+    .card-label {
+      font-size: 10px; font-weight: 700;
+      color: var(--comment);
+      text-transform: uppercase; letter-spacing: .1em;
+      margin-bottom: 14px;
+    }
+    /* INPUT FIELD */
+    .field { margin-bottom: 16px; }
+    .field-label {
+      font-size: 12px; color: var(--cyan);
+      margin-bottom: 6px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .field-count {
+      font-family: 'Roboto Mono', monospace;
+      font-size: 12px; font-weight: 500; color: var(--purple);
+      background: rgba(189,147,249,.12);
+      padding: 2px 8px; border-radius: 4px;
+    }
+    .field-input {
+      width: 100%;
+      background: var(--input-bg);
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      padding: 11px 14px;
+      color: var(--fg);
+      font-size: 16px;
+      font-family: 'Roboto Mono', monospace;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .field-input:focus {
+      outline: none;
+      border-color: var(--purple);
+      box-shadow: 0 0 0 3px rgba(189,147,249,.15);
+    }
+    /* CONTEXT TOGGLE */
+    .ctx-toggle {
+      display: flex; gap: 0;
+      border: 1.5px solid var(--border);
+      border-radius: 8px; overflow: hidden;
+      margin-bottom: 6px;
+    }
+    .ctx-btn {
+      flex: 1; padding: 8px;
+      background: var(--input-bg); color: var(--comment);
+      border: none; font-family: 'Google Sans', sans-serif;
+      font-size: 12px; font-weight: 600; cursor: pointer;
+      transition: background .15s, color .15s;
+    }
+    .ctx-btn.active { background: var(--purple); color: #fff; }
+    /* CHIPS */
+    .chip-row { display: flex; gap: 7px; flex-wrap: wrap; }
+    .chip {
+      padding: 5px 12px; border-radius: 20px;
+      font-size: 11px; font-weight: 700;
+      border: 1.5px solid; cursor: pointer;
+      transition: opacity .2s; user-select: none;
+    }
+    .chip.off { opacity: .35; }
+    .chip-anthropic { background: rgba(189,147,249,.12); color: var(--purple); border-color: rgba(189,147,249,.4); }
+    .chip-openai    { background: rgba(139,233,253,.12); color: var(--cyan);   border-color: rgba(139,233,253,.4); }
+    .chip-google    { background: rgba(80,250,123,.12);  color: var(--green);  border-color: rgba(80,250,123,.4);  }
+    .chip-dep       { background: transparent; color: var(--comment); border-color: var(--border); }
+    /* CHART */
+    .chart-wrap { position: relative; height: 180px; }
+    /* TABLE */
+    .table-wrap { padding: 0 24px 32px; }
+    .table-info {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 11px 18px;
+      font-size: 12px; color: var(--comment);
+      margin-bottom: 12px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .table-info strong { color: var(--fg); }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    thead th {
+      padding: 9px 14px; text-align: left;
+      font-size: 10px; font-weight: 700;
+      color: var(--comment);
+      text-transform: uppercase; letter-spacing: .08em;
+      border-bottom: 2px solid var(--border);
+    }
+    thead th:nth-child(n+3) { text-align: right; }
+    tbody tr { border-bottom: 1px solid var(--border); transition: background .15s; }
+    tbody tr:hover { background: var(--hover-bg); }
+    td { padding: 11px 14px; vertical-align: middle; }
+    td:nth-child(n+3) { text-align: right; font-family: 'Roboto Mono', monospace; font-size: 12px; }
+    /* BADGES */
+    .badge {
+      display: inline-block; padding: 2px 7px;
+      border-radius: 4px; font-size: 10px; font-weight: 700; margin-left: 6px;
+    }
+    .badge-anthropic { background: rgba(189,147,249,.15); color: var(--purple); }
+    .badge-openai    { background: rgba(139,233,253,.15); color: var(--cyan);   }
+    .badge-google    { background: rgba(80,250,123,.15);  color: var(--green);  }
+    .badge-dep       { background: rgba(98,114,164,.15);  color: var(--comment); font-size: 9px; }
+    .badge-long      { background: rgba(255,184,108,.15); color: var(--orange); font-size: 9px; }
+    /* COST COLORS */
+    .c-muted  { color: var(--comment); }
+    .c-low    { color: var(--green);  font-weight: 700; }
+    .c-mid    { color: var(--yellow); font-weight: 700; }
+    .c-high   { color: var(--orange); font-weight: 700; }
+    /* RANK */
+    .rank { font-size: 13px; font-weight: 700; color: var(--comment); }
+    .r1 { color: var(--yellow); }
+    .r2 { color: #cbd5e1; }
+    .r3 { color: var(--orange); }
+    /* DEPRECATED ROW */
+    tr.dep-row { opacity: .5; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">LLM<em>Hub</em></div>
+  <div class="nav-right">
+    <span class="updated" id="last-updated">Updated: —</span>
+    <button class="theme-btn" id="theme-btn" onclick="toggleTheme()">☀️ Light</button>
+  </div>
+</nav>
+
+<div class="top-section">
+
+  <!-- 토큰 입력 카드 -->
+  <div class="card card-input">
+    <div class="card-label">토큰 입력</div>
+
+    <div class="field">
+      <div class="field-label">
+        Input Tokens
+        <span class="field-count" id="input-display">1,000,000</span>
+      </div>
+      <input class="field-input" id="input-tokens" type="number" value="1000000" min="0">
+    </div>
+
+    <div class="field">
+      <div class="field-label">
+        Output Tokens
+        <span class="field-count" id="output-display">500,000</span>
+      </div>
+      <input class="field-input" id="output-tokens" type="number" value="500000" min="0">
+    </div>
+
+    <div class="card-label" style="margin-top:20px">컨텍스트 크기 (요청당)</div>
+    <div class="ctx-toggle">
+      <button class="ctx-btn active" id="ctx-short" onclick="setContext('short')">● Short</button>
+      <button class="ctx-btn"        id="ctx-long"  onclick="setContext('long')">  Long</button>
+    </div>
+    <div style="font-size:10px;color:var(--comment);margin-bottom:18px">
+      Gemini &gt;200k / GPT &gt;272k 초과 시 Long 요금 적용
+    </div>
+
+    <div class="card-label">프로바이더</div>
+    <div class="chip-row" id="provider-chips">
+      <span class="chip chip-anthropic" data-provider="anthropic" onclick="toggleProvider(this)">● Anthropic</span>
+      <span class="chip chip-openai"    data-provider="openai"    onclick="toggleProvider(this)">● OpenAI</span>
+      <span class="chip chip-google"    data-provider="google"    onclick="toggleProvider(this)">● Google</span>
+    </div>
+    <div class="chip-row" style="margin-top:8px">
+      <span class="chip chip-dep off" id="dep-chip" onclick="toggleDeprecated(this)">Deprecated 포함</span>
+    </div>
+  </div>
+
+  <!-- 차트 카드 -->
+  <div class="card card-chart">
+    <div class="card-label">Top 5 최저가 모델 — 총 비용 기준</div>
+    <div class="chart-wrap">
+      <canvas id="price-chart"></canvas>
+    </div>
+  </div>
+
+</div>
+
+<!-- 테이블 -->
+<div class="table-wrap">
+  <div class="table-info">
+    <span id="table-summary">계산 중...</span>
+    <span style="font-size:11px;font-weight:700;color:var(--purple)">총 비용 낮은 순 ↑</span>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th style="width:36px">#</th>
+        <th>모델</th>
+        <th>입력 비용</th>
+        <th>출력 비용</th>
+        <th>총 비용</th>
+      </tr>
+    </thead>
+    <tbody id="model-tbody"></tbody>
+  </table>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
