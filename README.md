@@ -62,7 +62,7 @@ LLM API 가격을 한눈에 비교하는 정적 웹사이트입니다.
 | xAI | https://docs.x.ai/developers/models |
 | AWS Bedrock | https://aws.amazon.com/bedrock/pricing/ |
 | GCP Model Garden | https://cloud.google.com/gemini-enterprise-agent-platform/generative-ai/pricing |
-| Azure AI Foundry | https://azure.microsoft.com/en-us/pricing/details/ai-foundry-models |
+| Azure AI Foundry | https://azure.microsoft.com/en-us/pricing/details/ai-foundry-models/deepseek/#pricing |
 
 AWS 가격은 **US East (N. Virginia)** 기준. DeepSeek V3.2는 해당 리전 미제공으로 AP·EU 기준 표기.
 Azure 가격은 **Global** 기준.

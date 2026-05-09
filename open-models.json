@@ -3,7 +3,7 @@
   "sources": {
     "aws": "https://aws.amazon.com/bedrock/pricing/",
     "gcp": "https://cloud.google.com/gemini-enterprise-agent-platform/generative-ai/pricing",
-    "azure": "https://azure.microsoft.com/en-us/pricing/details/ai-foundry-models"
+    "azure": "https://azure.microsoft.com/en-us/pricing/details/ai-foundry-models/deepseek/#pricing"
   },
   "notes": {
     "aws_region": "US East (N. Virginia) 기준. 일부 모델은 다른 리전만 제공.",
