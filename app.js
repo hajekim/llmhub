@@ -48,6 +48,12 @@ function visibleModels() {
 
 const RANK_MEDALS = ['🥇', '🥈', '🥉'];
 
+function sanitize(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+const PROVIDER_LABELS = { anthropic: 'Anthropic', openai: 'OpenAI', google: 'Google' };
+
 function renderTable() {
   const models = visibleModels()
     .map(m => ({ m, cost: calcCost(m) }))
@@ -59,14 +65,14 @@ function renderTable() {
     const rankCell = i < 3
       ? `<span class="rank rank-${['gold','silver','bronze'][i]}">${RANK_MEDALS[i]}</span>`
       : `<span class="rank">${i + 1}</span>`;
-    const badge = `<span class="badge badge-${m.provider}">${m.provider === 'anthropic' ? 'Anthropic' : m.provider === 'openai' ? 'OpenAI' : 'Google'}</span>`;
+    const badge = `<span class="badge badge-${m.provider}">${sanitize(PROVIDER_LABELS[m.provider] ?? m.provider)}</span>`;
     const longBadge = cost.isLongContext ? ' <span class="badge" style="background:rgba(255,184,108,.2);color:#ffb86c">🔺 Long</span>' : '';
     const depBadge = m.deprecated ? ' <span class="badge" style="background:rgba(255,85,85,.15);color:#ff5555">deprecated</span>' : '';
     const depClass = m.deprecated ? ' style="opacity:0.55"' : '';
     const cc = costClass(cost.totalCost);
     return `<tr${depClass}>
       <td>${rankCell}</td>
-      <td><span class="model-name">${m.name}</span>${badge}${longBadge}${depBadge}</td>
+      <td><span class="model-name">${sanitize(m.name)}</span>${badge}${longBadge}${depBadge}</td>
       <td class="cost-neutral">${fmt(cost.inputCost)}</td>
       <td class="cost-neutral">${fmt(cost.outputCost)}</td>
       <td class="${cc}">${fmt(cost.totalCost)}</td>
@@ -75,12 +81,18 @@ function renderTable() {
 }
 
 async function init() {
-  const res = await fetch('prices.json');
-  const data = await res.json();
-  state.models = data.models;
-  document.getElementById('last-updated').textContent = data.last_updated.slice(0, 10);
-  document.getElementById('output-display').textContent = fmtNum(state.outputTokens);
-  renderTable();
+  try {
+    const res = await fetch('prices.json');
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    state.models = data.models;
+    document.getElementById('last-updated').textContent = data.last_updated.slice(0, 10);
+    document.getElementById('output-display').textContent = fmtNum(state.outputTokens);
+    renderTable();
+  } catch (e) {
+    const tbody = document.getElementById('model-tbody');
+    if (tbody) tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:24px;color:#ff5555">가격 데이터를 불러오지 못했습니다. (${sanitize(e.message)})</td></tr>`;
+  }
 }
 
-init();
+document.addEventListener('DOMContentLoaded', init);
