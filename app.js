@@ -80,15 +80,90 @@ function renderTable() {
   }).join('');
 }
 
+function renderAll() {
+  renderTable();
+}
+
+function onTokenChange() {
+  const rawInput = document.getElementById('input-tokens').value.replace(/,/g, '');
+  const rawOutput = document.getElementById('output-tokens').value.replace(/,/g, '');
+  const inp = parseInt(rawInput, 10);
+  const out = parseInt(rawOutput, 10);
+  if (!isNaN(inp) && inp >= 0) state.inputTokens = inp;
+  if (!isNaN(out) && out >= 0) state.outputTokens = out;
+  document.getElementById('input-display').textContent = fmtNum(state.inputTokens);
+  document.getElementById('output-display').textContent = fmtNum(state.outputTokens);
+  renderAll();
+}
+
+function setContext(mode) {
+  state.contextMode = mode;
+  document.getElementById('ctx-short').classList.toggle('active', mode === 'short');
+  document.getElementById('ctx-long').classList.toggle('active', mode === 'long');
+  renderAll();
+}
+
+function toggleProvider(provider) {
+  if (state.activeProviders.has(provider)) {
+    if (state.activeProviders.size > 1) state.activeProviders.delete(provider);
+  } else {
+    state.activeProviders.add(provider);
+  }
+  document.querySelectorAll('.chip[data-provider]').forEach(chip => {
+    chip.classList.toggle('chip-off', !state.activeProviders.has(chip.dataset.provider));
+  });
+  renderAll();
+}
+
+function toggleDeprecated() {
+  state.showDeprecated = !state.showDeprecated;
+  const chip = document.getElementById('dep-chip');
+  chip.classList.toggle('chip-off', !state.showDeprecated);
+  renderAll();
+}
+
+function toggleTheme() {
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  document.getElementById('theme-btn').textContent = isDark ? '🌙' : '☀️';
+}
+
 async function init() {
+  // theme
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+  document.getElementById('theme-btn').textContent = prefersDark ? '☀️' : '🌙';
+
+  // theme toggle
+  document.getElementById('theme-btn').addEventListener('click', toggleTheme);
+
+  // token inputs
+  document.getElementById('input-tokens').addEventListener('input', onTokenChange);
+  document.getElementById('output-tokens').addEventListener('input', onTokenChange);
+
+  // context toggle
+  document.getElementById('ctx-short').addEventListener('click', () => setContext('short'));
+  document.getElementById('ctx-long').addEventListener('click', () => setContext('long'));
+
+  // provider chips
+  document.querySelectorAll('.chip[data-provider]').forEach(chip => {
+    chip.addEventListener('click', () => toggleProvider(chip.dataset.provider));
+  });
+
+  // deprecated chip
+  document.getElementById('dep-chip').addEventListener('click', toggleDeprecated);
+
+  // load data
   try {
     const res = await fetch('prices.json');
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
     state.models = data.models;
     document.getElementById('last-updated').textContent = data.last_updated.slice(0, 10);
+    document.getElementById('input-display').textContent = fmtNum(state.inputTokens);
     document.getElementById('output-display').textContent = fmtNum(state.outputTokens);
-    renderTable();
+    renderAll();
   } catch (e) {
     const tbody = document.getElementById('model-tbody');
     if (tbody) tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:24px;color:#ff5555">가격 데이터를 불러오지 못했습니다. (${sanitize(e.message)})</td></tr>`;
