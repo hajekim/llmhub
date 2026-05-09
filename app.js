@@ -14,7 +14,7 @@ const PROVIDER_COLORS = {
   anthropic: { bg: 'rgba(189,147,249,0.8)', border: '#bd93f9' },
   xai:       { bg: 'rgba(241,250,140,0.8)', border: '#f1fa8c' },
   aws:       { bg: 'rgba(255,153,0,0.8)',   border: '#ff9900' },
-  gcp:       { bg: 'rgba(110,166,255,0.8)', border: '#6ea6ff' },
+  gcp:       { bg: 'rgba(77,208,225,0.8)',  border: '#4dd0e1' },
   azure:     { bg: 'rgba(77,184,255,0.8)',  border: '#4db8ff' },
 };
 
@@ -171,54 +171,57 @@ function renderOpenModelsTable() {
   }
 
   const fmtP = v => v != null ? `$${v.toFixed(2)}` : '<span style="color:var(--comment)">—</span>';
+  const CSP_ORDER = [
+    { key: 'aws',   label: 'AWS' },
+    { key: 'gcp',   label: 'GCP' },
+    { key: 'azure', label: 'Azure' },
+  ];
 
   container.innerHTML = OPEN_FAMILY_ORDER.map(family => {
     const models = openModels.filter(m => m.family === family);
     if (!models.length) return '';
 
-    const rows = models.map(m => {
-      const awsIn    = fmtP(m.aws?.input);
-      const awsOut   = fmtP(m.aws?.output);
-      const gcpIn    = fmtP(m.gcp?.input);
-      const gcpOut   = fmtP(m.gcp?.output);
-      const azureIn  = fmtP(m.azure?.input);
-      const azureOut = fmtP(m.azure?.output);
+    const rows = models.map((m, mi) => {
+      const totals = CSP_ORDER
+        .map(c => m[c.key] ? { key: c.key, val: m[c.key].input + m[c.key].output } : null)
+        .filter(Boolean);
+      const cheapest = totals.length > 1
+        ? totals.reduce((a, b) => a.val < b.val ? a : b).key
+        : null;
 
-      const totals = [
-        m.aws   ? { key: 'aws',   val: m.aws.input   + m.aws.output }   : null,
-        m.gcp   ? { key: 'gcp',   val: m.gcp.input   + m.gcp.output }   : null,
-        m.azure ? { key: 'azure', val: m.azure.input + m.azure.output } : null,
-      ].filter(Boolean);
-
-      let cheapest = null;
-      if (totals.length > 1) {
-        cheapest = totals.reduce((a, b) => a.val < b.val ? a : b).key;
-      }
-
-      const hi = (key) => key === cheapest ? ' style="color:var(--green);font-weight:700"' : '';
-
-      return `<tr>
-        <td style="font-weight:500">${sanitize(m.name)}</td>
-        <td${hi('aws')}>${awsIn}</td>
-        <td${hi('aws')}>${awsOut}</td>
-        <td${hi('gcp')}>${gcpIn}</td>
-        <td${hi('gcp')}>${gcpOut}</td>
-        <td${hi('azure')}>${azureIn}</td>
-        <td${hi('azure')}>${azureOut}</td>
-      </tr>`;
+      return CSP_ORDER.map((csp, ci) => {
+        const data   = m[csp.key];
+        const hi     = csp.key === cheapest;
+        const hiStyle = hi ? ';color:var(--green);font-weight:700' : '';
+        const modelCell = ci === 0
+          ? `<td class="model-name" rowspan="${CSP_ORDER.length}">${sanitize(m.name)}</td>`
+          : '';
+        const sepClass = mi > 0 && ci === 0 ? ' class="model-sep"' : '';
+        return `<tr${sepClass}>
+          ${modelCell}
+          <td style="padding-left:10px${hiStyle}">
+            <span class="badge badge-${csp.key}" style="font-size:10px">${csp.label}</span>
+          </td>
+          <td class="price-cell" style="${hiStyle.slice(1)}">${data ? fmtP(data.input) : fmtP(null)}</td>
+          <td class="price-cell" style="${hiStyle.slice(1)}">${data ? fmtP(data.output) : fmtP(null)}</td>
+        </tr>`;
+      }).join('');
     }).join('');
 
     return `<div class="provider-group">
       <div class="provider-heading provider-heading-open-${family}">${sanitize(OPEN_FAMILY_NAMES[family])}</div>
-      <table class="price-ref-table">
+      <table class="open-models-table">
+        <colgroup>
+          <col style="width:auto">
+          <col style="width:80px">
+          <col style="width:130px">
+          <col style="width:130px">
+        </colgroup>
         <thead><tr>
           <th>모델</th>
-          <th>AWS 입력</th>
-          <th>AWS 출력</th>
-          <th>GCP 입력</th>
-          <th>GCP 출력</th>
-          <th>Azure 입력</th>
-          <th>Azure 출력</th>
+          <th>CSP</th>
+          <th>입력 ($/MTok)</th>
+          <th>출력 ($/MTok)</th>
         </tr></thead>
         <tbody>${rows}</tbody>
       </table>
@@ -331,13 +334,13 @@ function renderPriceTable() {
 
     const rows = models.map(m => {
       const depBadge = m.deprecated ? ' <span class="badge badge-dep">deprecated</span>' : '';
-      let longCtxCell = '<span style="color:var(--comment)">—</span>';
-      if (m.long_context) {
-        const thr = `>${Math.round(m.long_context.threshold_tokens / 1000)}K`;
-        longCtxCell = `<span style="color:var(--orange);font-weight:700">${thr}</span>`
-          + `<span class="long-ctx-note">입력 $${m.long_context.input_price_per_mtok.toFixed(2)}</span>`
-          + `<span class="long-ctx-note">출력 $${m.long_context.output_price_per_mtok.toFixed(2)}</span>`;
-      }
+      const lc = m.long_context;
+      const thr = lc ? `>${Math.round(lc.threshold_tokens / 1000)}K` : null;
+      const inputCell  = `$${m.input_price_per_mtok.toFixed(3)}`
+        + (lc ? `<span class="long-ctx-note" style="color:var(--orange)">$${lc.input_price_per_mtok.toFixed(3)} (${thr})</span>` : '');
+      const outputCell = `$${m.output_price_per_mtok.toFixed(3)}`
+        + (lc ? `<span class="long-ctx-note" style="color:var(--orange)">$${lc.output_price_per_mtok.toFixed(3)} (${thr})</span>` : '');
+
       const today = new Date().toISOString().slice(0, 10);
       let shutdownCell = '<span style="color:var(--comment)">—</span>';
       if (m.shutdown_date) {
@@ -347,9 +350,8 @@ function renderPriceTable() {
       }
       return `<tr${m.deprecated ? ' style="opacity:.5"' : ''}>
         <td><span style="font-weight:500">${sanitize(m.name)}</span>${depBadge}</td>
-        <td>$${m.input_price_per_mtok.toFixed(3)}</td>
-        <td>$${m.output_price_per_mtok.toFixed(3)}</td>
-        <td>${longCtxCell}</td>
+        <td>${inputCell}</td>
+        <td>${outputCell}</td>
         <td>${shutdownCell}</td>
       </tr>`;
     }).join('');
@@ -357,11 +359,16 @@ function renderPriceTable() {
     return `<div class="provider-group">
       <div class="provider-heading provider-heading-${provider}">${sanitize(PROVIDER_NAMES[provider])}</div>
       <table class="price-ref-table">
+        <colgroup>
+          <col style="width:auto">
+          <col style="width:130px">
+          <col style="width:130px">
+          <col style="width:100px">
+        </colgroup>
         <thead><tr>
           <th>모델</th>
           <th>입력 / MTok</th>
           <th>출력 / MTok</th>
-          <th>Long Context</th>
           <th>Shutdown</th>
         </tr></thead>
         <tbody>${rows}</tbody>

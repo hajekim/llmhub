@@ -27,7 +27,7 @@
       --red:       #ff5555;
       --yellow:    #f1fa8c;
       --aws-col:   #ff9900;
-      --gcp-col:   #6ea6ff;
+      --gcp-col:   #4dd0e1;
       --azure-col: #4db8ff;
       --shadow:    0 4px 16px rgba(0,0,0,.5), 0 1px 4px rgba(0,0,0,.3);
     }
@@ -49,7 +49,7 @@
       --red:       #d32f2f;
       --yellow:    #8a7500;
       --aws-col:   #c45c00;
-      --gcp-col:   #1967d2;
+      --gcp-col:   #00838f;
       --azure-col: #0067b8;
       --shadow:    0 2px 8px rgba(0,0,0,.1), 0 1px 3px rgba(0,0,0,.08);
     }
@@ -66,12 +66,17 @@
       background: var(--nav-bg);
       border-bottom: 1px solid var(--border);
       box-shadow: var(--shadow);
-      padding: 0 24px;
       height: 58px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
       position: sticky; top: 0; z-index: 10;
+    }
+    .page-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      width: 100%;
+      padding: 0 24px;
+    }
+    nav .page-inner {
+      display: flex; align-items: center; justify-content: space-between; height: 100%;
     }
     .logo { font-size: 19px; font-weight: 700; color: var(--fg); letter-spacing: -.5px; }
     .logo em { color: var(--purple); font-style: normal; }
@@ -95,16 +100,18 @@
       grid-template-columns: 320px 1fr;
       gap: 16px;
       padding: 20px 24px;
+      max-width: 1280px;
+      margin: 0 auto;
     }
     @media (max-width: 768px) {
       .top-section { grid-template-columns: 1fr; padding: 12px 16px; }
       .card-input  { order: 1; }
       .card-chart  { order: 2; }
       .table-wrap  { padding: 0 16px 24px; }
-      nav { padding: 0 16px; }
+      nav .page-inner { padding: 0 16px; }
+      .tab-bar .page-inner { padding: 0 12px; }
       .updated { display: none; }
       .source-links { display: none !important; }
-      .tab-bar { padding: 0 12px; }
     }
     /* CARD */
     .card {
@@ -184,14 +191,15 @@
     .chip-google    { background: rgba(80,250,123,.12);  color: var(--green);  border-color: rgba(80,250,123,.4);  }
     .chip-xai       { background: rgba(241,250,140,.12); color: var(--yellow); border-color: rgba(241,250,140,.4); }
     .chip-aws       { background: rgba(255,153,0,.12);   color: var(--aws-col);   border-color: rgba(255,153,0,.4); }
-    .chip-gcp       { background: rgba(110,166,255,.12); color: var(--gcp-col);   border-color: rgba(110,166,255,.4); }
+    .chip-gcp       { background: rgba(77,208,225,.12);  color: var(--gcp-col);   border-color: rgba(77,208,225,.4); }
     .chip-azure     { background: rgba(77,184,255,.12);  color: var(--azure-col); border-color: rgba(77,184,255,.4); }
     .chip-dep       { background: transparent; color: var(--comment); border-color: var(--border); }
     /* CHART */
     .card-chart { display: flex; flex-direction: column; }
     .card-chart .chart-wrap { flex: 1; min-height: 160px; position: relative; }
     /* TABLE */
-    .table-wrap { padding: 0 24px 32px; }
+    .table-wrap { padding: 0 24px 32px; overflow-x: auto; max-width: 1280px; margin: 0 auto; }
+    .table-scroll { overflow-x: auto; }
     .table-info {
       background: var(--card-bg);
       border: 1px solid var(--border);
@@ -225,7 +233,7 @@
     .badge-google    { background: rgba(80,250,123,.15);  color: var(--green);  }
     .badge-xai       { background: rgba(241,250,140,.15); color: var(--yellow); }
     .badge-aws       { background: rgba(255,153,0,.15);   color: var(--aws-col);   }
-    .badge-gcp       { background: rgba(110,166,255,.15); color: var(--gcp-col);   }
+    .badge-gcp       { background: rgba(77,208,225,.15);  color: var(--gcp-col);   }
     .badge-azure     { background: rgba(77,184,255,.15);  color: var(--azure-col); }
     /* Open model family badges */
     .badge-family-meta     { background: rgba(255,184,108,.15); color: var(--orange); }
@@ -281,14 +289,15 @@
     .source-link-google    { background: rgba(80,250,123,.1);  color: var(--green);  border-color: rgba(80,250,123,.4);  }
     .source-link-xai       { background: rgba(241,250,140,.1); color: var(--yellow); border-color: rgba(241,250,140,.4); }
     .source-link-aws       { background: rgba(255,153,0,.1);   color: var(--aws-col);   border-color: rgba(255,153,0,.4); }
-    .source-link-gcp       { background: rgba(110,166,255,.1); color: var(--gcp-col);   border-color: rgba(110,166,255,.4); }
+    .source-link-gcp       { background: rgba(77,208,225,.1);  color: var(--gcp-col);   border-color: rgba(77,208,225,.4); }
     .source-link-azure     { background: rgba(77,184,255,.1);  color: var(--azure-col); border-color: rgba(77,184,255,.4); }
     /* TAB BAR */
     .tab-bar {
-      display: flex; align-items: center; gap: 0;
       background: var(--nav-bg);
       border-bottom: 1px solid var(--border);
-      padding: 0 24px;
+    }
+    .tab-bar .page-inner {
+      display: flex; align-items: center;
     }
     .tab-btn {
       padding: 12px 20px;
@@ -306,7 +315,7 @@
     /* PRICE TABLE TAB */
     .tab-panel { display: none; }
     .tab-panel.active { display: block; }
-    .price-table-wrap { padding: 20px 24px 32px; }
+    .price-table-wrap { padding: 20px 24px 32px; overflow-x: auto; max-width: 1280px; margin: 0 auto; }
     .provider-group { margin-bottom: 32px; }
     .provider-heading {
       font-size: 12px; font-weight: 700;
@@ -319,7 +328,7 @@
     .provider-heading-openai    { background: rgba(139,233,253,.15); color: var(--cyan);   }
     .provider-heading-google    { background: rgba(80,250,123,.15);  color: var(--green);  }
     .provider-heading-xai       { background: rgba(241,250,140,.15); color: var(--yellow); }
-    .price-ref-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 4px; }
+    .price-ref-table { width: 100%; min-width: 480px; border-collapse: collapse; font-size: 13px; margin-bottom: 4px; }
     .price-ref-table thead th {
       padding: 9px 14px; text-align: left;
       font-size: 10px; font-weight: 700; color: var(--comment);
@@ -332,7 +341,7 @@
     .price-ref-table tbody tr:hover { background: var(--hover-bg); }
     .price-ref-table td { padding: 10px 14px; vertical-align: middle; }
     .price-ref-table td:nth-child(n+2) { text-align: right; font-family: 'Roboto Mono', monospace; font-size: 12px; }
-    .long-ctx-note { font-size: 10px; color: var(--orange); display: block; margin-top: 2px; }
+    .long-ctx-note { font-size: 12px; color: var(--orange); display: block; margin-top: 2px; }
     /* OPEN MODELS FAMILY HEADINGS */
     .provider-heading-open-meta     { background: rgba(255,184,108,.15); color: var(--orange); }
     .provider-heading-open-mistral  { background: rgba(255,121,198,.15); color: var(--pink);   }
@@ -340,6 +349,22 @@
     .provider-heading-open-qwen     { background: rgba(189,147,249,.15); color: var(--purple); }
     .provider-heading-open-gemma    { background: rgba(80,250,123,.15);  color: var(--green);  }
     .provider-heading-open-grok     { background: rgba(241,250,140,.15); color: var(--yellow); }
+    /* OPEN MODELS NESTED TABLE */
+    .open-models-table { width: 100%; min-width: 420px; border-collapse: collapse; font-size: 13px; margin-bottom: 4px; }
+    .open-models-table thead th {
+      padding: 9px 14px; text-align: left;
+      font-size: 10px; font-weight: 700; color: var(--comment);
+      text-transform: uppercase; letter-spacing: .08em;
+      border-bottom: 2px solid var(--border);
+      background: var(--card-bg);
+    }
+    .open-models-table thead th:nth-child(n+3) { text-align: right; }
+    .open-models-table tbody tr { border-bottom: 1px solid var(--border); transition: background .15s; }
+    .open-models-table tbody tr:hover { background: var(--hover-bg); }
+    .open-models-table tbody tr.model-sep td { border-top: 2px solid var(--border); }
+    .open-models-table td { padding: 8px 14px; vertical-align: middle; }
+    .open-models-table td.model-name { font-weight: 500; vertical-align: middle; border-right: 1px solid var(--border); padding-right: 12px; }
+    .open-models-table td.price-cell { text-align: right; font-family: 'Roboto Mono', monospace; font-size: 12px; }
     /* OPEN MODELS TABLE NOTE */
     .open-models-note {
       font-size: 11px; color: var(--comment);
@@ -358,29 +383,33 @@
 <body>
 
 <nav>
-  <div class="logo">LLM<em>Hub</em></div>
-  <div class="nav-right">
-    <span class="updated" id="last-updated">Updated: —</span>
-    <button class="theme-btn" id="theme-btn">☀️ Light</button>
+  <div class="page-inner">
+    <div class="logo">LLM<em>Hub</em></div>
+    <div class="nav-right">
+      <span class="updated" id="last-updated">Updated: —</span>
+      <button class="theme-btn" id="theme-btn">☀️ Light</button>
+    </div>
   </div>
 </nav>
 
 <div class="tab-bar">
-  <button class="tab-btn active" id="tab-btn-calculator">계산기</button>
-  <button class="tab-btn" id="tab-btn-prices">API 가격</button>
-  <button class="tab-btn" id="tab-btn-open-models">오픈 모델</button>
-  <div class="source-links" id="source-links-direct" style="display:none">
-    <span>가격 출처</span>
-    <a href="https://platform.claude.com/docs/en/about-claude/pricing" target="_blank" rel="noopener" class="source-link source-link-anthropic">Anthropic</a>
-    <a href="https://developers.openai.com/api/docs/pricing" target="_blank" rel="noopener" class="source-link source-link-openai">OpenAI</a>
-    <a href="https://cloud.google.com/gemini-enterprise-agent-platform/generative-ai/pricing" target="_blank" rel="noopener" class="source-link source-link-google">Google</a>
-    <a href="https://docs.x.ai/developers/models" target="_blank" rel="noopener" class="source-link source-link-xai">xAI</a>
-  </div>
-  <div class="source-links" id="source-links-open" style="display:none">
-    <span>가격 출처</span>
-    <a href="https://aws.amazon.com/bedrock/pricing/" target="_blank" rel="noopener" class="source-link source-link-aws">AWS Bedrock</a>
-    <a href="https://cloud.google.com/gemini-enterprise-agent-platform/generative-ai/pricing" target="_blank" rel="noopener" class="source-link source-link-gcp">GCP Model Garden</a>
-    <a href="https://azure.microsoft.com/en-us/pricing/details/ai-foundry-models/deepseek/#pricing" target="_blank" rel="noopener" class="source-link source-link-azure">Azure AI Foundry</a>
+  <div class="page-inner">
+    <button class="tab-btn active" id="tab-btn-calculator">계산기</button>
+    <button class="tab-btn" id="tab-btn-prices">API 가격</button>
+    <button class="tab-btn" id="tab-btn-open-models">오픈 모델</button>
+    <div class="source-links" id="source-links-direct" style="display:none">
+      <span>가격 출처</span>
+      <a href="https://platform.claude.com/docs/en/about-claude/pricing" target="_blank" rel="noopener" class="source-link source-link-anthropic">Anthropic</a>
+      <a href="https://developers.openai.com/api/docs/pricing" target="_blank" rel="noopener" class="source-link source-link-openai">OpenAI</a>
+      <a href="https://cloud.google.com/gemini-enterprise-agent-platform/generative-ai/pricing" target="_blank" rel="noopener" class="source-link source-link-google">Google</a>
+      <a href="https://docs.x.ai/developers/models" target="_blank" rel="noopener" class="source-link source-link-xai">xAI</a>
+    </div>
+    <div class="source-links" id="source-links-open" style="display:none">
+      <span>가격 출처</span>
+      <a href="https://aws.amazon.com/bedrock/pricing/" target="_blank" rel="noopener" class="source-link source-link-aws">AWS Bedrock</a>
+      <a href="https://cloud.google.com/gemini-enterprise-agent-platform/generative-ai/pricing" target="_blank" rel="noopener" class="source-link source-link-gcp">GCP Model Garden</a>
+      <a href="https://azure.microsoft.com/en-us/pricing/details/ai-foundry-models/deepseek/#pricing" target="_blank" rel="noopener" class="source-link source-link-azure">Azure AI Foundry</a>
+    </div>
   </div>
 </div>
 
