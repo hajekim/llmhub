@@ -65,7 +65,7 @@ function sanitize(str) {
 }
 
 const PROVIDER_LABELS = { anthropic: 'Anthropic', openai: 'OpenAI', google: 'Google', xai: 'xAI', aws: 'AWS', gcp: 'GCP' };
-const OPEN_FAMILY_LABELS = { meta: 'Meta', mistral: 'Mistral', deepseek: 'DeepSeek', qwen: 'Qwen', gemma: 'Google', grok: 'xAI' };
+const OPEN_FAMILY_LABELS = { meta: 'Meta', mistral: 'Mistral', deepseek: 'DeepSeek', qwen: 'Qwen', gemma: 'Gemma', grok: 'Grok' };
 
 function renderTable() {
   const models = visibleModels()
