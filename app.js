@@ -220,7 +220,7 @@ async function init() {
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
     state.models = data.models;
-    document.getElementById('last-updated').textContent = data.last_updated.slice(0, 10);
+    document.getElementById('last-updated').textContent = '가격 기준일: ' + data.last_updated.slice(0, 10);
     document.getElementById('input-display').textContent = fmtNum(state.inputTokens);
     document.getElementById('output-display').textContent = fmtNum(state.outputTokens);
     renderAll();

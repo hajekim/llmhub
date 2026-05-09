@@ -162,9 +162,15 @@
       padding: 5px 12px; border-radius: 20px;
       font-size: 11px; font-weight: 700;
       border: 1.5px solid; cursor: pointer;
-      transition: opacity .2s; user-select: none;
+      transition: opacity .2s, filter .2s; user-select: none;
     }
-    .chip.off { opacity: .35; }
+    .chip.chip-off { opacity: .35; filter: grayscale(60%); }
+    /* Deprecated chip: red/warning tint when active (showing deprecated) */
+    .chip-dep:not(.chip-off) {
+      background: rgba(255,85,85,.15);
+      color: var(--red);
+      border-color: rgba(255,85,85,.5);
+    }
     .chip-anthropic { background: rgba(189,147,249,.12); color: var(--purple); border-color: rgba(189,147,249,.4); }
     .chip-openai    { background: rgba(139,233,253,.12); color: var(--cyan);   border-color: rgba(139,233,253,.4); }
     .chip-google    { background: rgba(80,250,123,.12);  color: var(--green);  border-color: rgba(80,250,123,.4);  }
@@ -269,7 +275,7 @@
       <span class="chip chip-google"    data-provider="google">● Google</span>
     </div>
     <div class="chip-row" style="margin-top:8px">
-      <span class="chip chip-dep off" id="dep-chip">Deprecated 포함</span>
+      <span class="chip chip-dep chip-off" id="dep-chip">Deprecated 포함</span>
     </div>
   </div>
 
