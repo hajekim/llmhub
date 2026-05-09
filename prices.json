@@ -102,7 +102,12 @@
       "provider": "openai",
       "input_price_per_mtok": 2.50,
       "output_price_per_mtok": 15.00,
-      "deprecated": false
+      "deprecated": false,
+      "long_context": {
+        "threshold_tokens": 272000,
+        "input_price_per_mtok": 5.00,
+        "output_price_per_mtok": 22.50
+      }
     },
     {
       "id": "gpt-5-5",
@@ -110,7 +115,12 @@
       "provider": "openai",
       "input_price_per_mtok": 5.00,
       "output_price_per_mtok": 30.00,
-      "deprecated": false
+      "deprecated": false,
+      "long_context": {
+        "threshold_tokens": 272000,
+        "input_price_per_mtok": 10.00,
+        "output_price_per_mtok": 45.00
+      }
     },
     {
       "id": "gpt-5-4-pro",
