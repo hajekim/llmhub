@@ -137,15 +137,73 @@ function updateChart() {
 }
 
 function switchTab(tab) {
-  document.getElementById('tab-calculator').classList.toggle('active', tab === 'calculator');
-  document.getElementById('tab-prices').classList.toggle('active', tab === 'prices');
-  document.getElementById('tab-btn-calculator').classList.toggle('active', tab === 'calculator');
-  document.getElementById('tab-btn-prices').classList.toggle('active', tab === 'prices');
+  ['calculator', 'prices', 'open-models'].forEach(t => {
+    document.getElementById(`tab-${t}`)?.classList.toggle('active', t === tab);
+    document.getElementById(`tab-btn-${t}`)?.classList.toggle('active', t === tab);
+  });
   if (tab === 'prices') renderPriceTable();
+  if (tab === 'open-models') renderOpenModelsTable();
 }
 
 const PROVIDER_ORDER = ['anthropic', 'openai', 'google', 'xai'];
 const PROVIDER_NAMES = { anthropic: 'Anthropic (Claude)', openai: 'OpenAI', google: 'Google (Gemini)', xai: 'xAI (Grok)' };
+
+const OPEN_FAMILY_NAMES = { meta: 'Meta (Llama)', mistral: 'Mistral AI', deepseek: 'DeepSeek', qwen: 'Qwen (Alibaba)', gemma: 'Google (Gemma)', grok: 'xAI (Grok)' };
+const OPEN_FAMILY_ORDER = ['meta', 'mistral', 'deepseek', 'qwen', 'gemma', 'grok'];
+
+let openModels = [];
+
+function renderOpenModelsTable() {
+  const container = document.getElementById('open-models-content');
+  if (!openModels.length) {
+    container.innerHTML = '<p style="color:var(--comment);padding:20px">데이터를 불러오는 중...</p>';
+    return;
+  }
+
+  const fmtP = v => v != null ? `$${v.toFixed(2)}` : '<span style="color:var(--comment)">—</span>';
+
+  container.innerHTML = OPEN_FAMILY_ORDER.map(family => {
+    const models = openModels.filter(m => m.family === family);
+    if (!models.length) return '';
+
+    const rows = models.map(m => {
+      const awsIn  = fmtP(m.aws?.input);
+      const awsOut = fmtP(m.aws?.output);
+      const gcpIn  = fmtP(m.gcp?.input);
+      const gcpOut = fmtP(m.gcp?.output);
+
+      let cheaperAws = '', cheaperGcp = '';
+      if (m.aws && m.gcp) {
+        const awsTotal = m.aws.input + m.aws.output;
+        const gcpTotal = m.gcp.input + m.gcp.output;
+        if (awsTotal < gcpTotal) cheaperAws = ' style="color:var(--green);font-weight:700"';
+        else if (gcpTotal < awsTotal) cheaperGcp = ' style="color:var(--green);font-weight:700"';
+      }
+
+      return `<tr>
+        <td style="font-weight:500">${sanitize(m.name)}</td>
+        <td${cheaperAws}>${awsIn}</td>
+        <td${cheaperAws}>${awsOut}</td>
+        <td${cheaperGcp}>${gcpIn}</td>
+        <td${cheaperGcp}>${gcpOut}</td>
+      </tr>`;
+    }).join('');
+
+    return `<div class="provider-group">
+      <div class="provider-heading provider-heading-open-${family}">${sanitize(OPEN_FAMILY_NAMES[family])}</div>
+      <table class="price-ref-table">
+        <thead><tr>
+          <th>모델</th>
+          <th>AWS 입력</th>
+          <th>AWS 출력</th>
+          <th>GCP 입력</th>
+          <th>GCP 출력</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
+  }).join('');
+}
 
 function modelVersionKey(name) {
   const nums = name.match(/\d+(?:\.\d+)*/g);
@@ -299,20 +357,29 @@ async function init() {
   // tab buttons
   document.getElementById('tab-btn-calculator').addEventListener('click', () => switchTab('calculator'));
   document.getElementById('tab-btn-prices').addEventListener('click', () => switchTab('prices'));
+  document.getElementById('tab-btn-open-models').addEventListener('click', () => switchTab('open-models'));
 
   // init chart
   initChart();
 
   // load data
   try {
-    const res = await fetch('prices.json');
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
+    const [pricesRes, openRes] = await Promise.all([
+      fetch('prices.json'),
+      fetch('open-models.json'),
+    ]);
+    if (!pricesRes.ok) throw new Error(`HTTP ${pricesRes.status}`);
+    const data = await pricesRes.json();
     state.models = data.models;
     document.getElementById('last-updated').textContent = '가격 기준일: ' + data.last_updated.slice(0, 10);
     document.getElementById('input-display').textContent = fmtNum(state.inputTokens);
     document.getElementById('output-display').textContent = fmtNum(state.outputTokens);
     renderAll();
+
+    if (openRes.ok) {
+      const openData = await openRes.json();
+      openModels = openData.models;
+    }
   } catch (e) {
     const tbody = document.getElementById('model-tbody');
     if (tbody) tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:24px;color:#ff5555">가격 데이터를 불러오지 못했습니다. (${sanitize(e.message)})</td></tr>`;
