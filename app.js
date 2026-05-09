@@ -7,6 +7,14 @@ const state = {
   showDeprecated: false,
 };
 
+const PROVIDER_COLORS = {
+  google:    { bg: 'rgba(80,250,123,0.8)',  border: '#50fa7b' },
+  openai:    { bg: 'rgba(139,233,253,0.8)', border: '#8be9fd' },
+  anthropic: { bg: 'rgba(189,147,249,0.8)', border: '#bd93f9' },
+};
+
+let chartInstance = null;
+
 function calcCost(model) {
   let inputPrice = model.input_price_per_mtok;
   let outputPrice = model.output_price_per_mtok;
@@ -80,9 +88,53 @@ function renderTable() {
   }).join('');
 }
 
+function initChart() {
+  const ctx = document.getElementById('price-chart').getContext('2d');
+  chartInstance = new Chart(ctx, {
+    type: 'bar',
+    data: { labels: [], datasets: [{ data: [], backgroundColor: [], borderColor: [], borderWidth: 2, borderRadius: 6 }] },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => fmt(ctx.parsed.y),
+          },
+        },
+      },
+      scales: {
+        x: { grid: { display: false }, ticks: { color: '#6272a4', font: { size: 10 } } },
+        y: {
+          grid: { color: 'rgba(98,114,164,0.2)' },
+          ticks: { color: '#6272a4', font: { size: 10 }, callback: v => fmt(v) },
+          beginAtZero: true,
+        },
+      },
+    },
+  });
+}
+
+function updateChart() {
+  if (!chartInstance) return;
+  const top5 = visibleModels()
+    .map(m => ({ m, cost: calcCost(m) }))
+    .filter(({ cost }) => cost !== null)
+    .sort((a, b) => a.cost.totalCost - b.cost.totalCost)
+    .slice(0, 5);
+
+  chartInstance.data.labels = top5.map(({ m }) => m.name);
+  chartInstance.data.datasets[0].data = top5.map(({ cost }) => cost.totalCost);
+  chartInstance.data.datasets[0].backgroundColor = top5.map(({ m }) => PROVIDER_COLORS[m.provider]?.bg ?? 'rgba(98,114,164,0.8)');
+  chartInstance.data.datasets[0].borderColor = top5.map(({ m }) => PROVIDER_COLORS[m.provider]?.border ?? '#6272a4');
+  chartInstance.update();
+}
+
 function renderAll() {
   if (!state.models.length) return;
   renderTable();
+  updateChart();
 }
 
 function onTokenChange() {
@@ -158,6 +210,9 @@ async function init() {
 
   // deprecated chip
   document.getElementById('dep-chip').addEventListener('click', toggleDeprecated);
+
+  // init chart
+  initChart();
 
   // load data
   try {
