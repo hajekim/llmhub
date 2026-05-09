@@ -249,9 +249,17 @@ function renderPriceScatter() {
   if (scatterInstance) { scatterInstance.destroy(); scatterInstance = null; }
 
   const datasets = PROVIDER_ORDER.map(provider => {
-    const points = state.models
+    const grouped = new Map();
+    state.models
       .filter(m => m.provider === provider && !m.deprecated)
-      .map(m => ({ x: m.input_price_per_mtok, y: m.output_price_per_mtok, name: m.name }));
+      .forEach(m => {
+        const key = `${m.input_price_per_mtok}|${m.output_price_per_mtok}`;
+        if (!grouped.has(key)) {
+          grouped.set(key, { x: m.input_price_per_mtok, y: m.output_price_per_mtok, names: [] });
+        }
+        grouped.get(key).names.push(m.name);
+      });
+    const points = Array.from(grouped.values());
     if (!points.length) return null;
     const col = PROVIDER_COLORS[provider];
     return {
@@ -280,7 +288,9 @@ function renderPriceScatter() {
           callbacks: {
             label: ctx => {
               const d = ctx.raw;
-              return `${d.name}  입력 $${d.x.toFixed(3)} / 출력 $${d.y.toFixed(3)}`;
+              const price = `  입력 $${d.x.toFixed(3)} / 출력 $${d.y.toFixed(3)}`;
+              if (d.names.length === 1) return `${d.names[0]}${price}`;
+              return [`${d.names.length}개 모델${price}`, ...d.names.map(n => `  • ${n}`)];
             },
           },
         },

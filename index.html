@@ -103,7 +103,7 @@
       .table-wrap  { padding: 0 16px 24px; }
       nav { padding: 0 16px; }
       .updated { display: none; }
-      .source-links span { display: none; }
+      .source-links { display: none !important; }
       .tab-bar { padding: 0 12px; }
     }
     /* CARD */
@@ -366,8 +366,8 @@
 </nav>
 
 <div class="tab-bar">
-  <button class="tab-btn active" id="tab-btn-calculator">가격 계산기</button>
-  <button class="tab-btn" id="tab-btn-prices">가격표</button>
+  <button class="tab-btn active" id="tab-btn-calculator">계산기</button>
+  <button class="tab-btn" id="tab-btn-prices">API 가격</button>
   <button class="tab-btn" id="tab-btn-open-models">오픈 모델</button>
   <div class="source-links" id="source-links-direct" style="display:none">
     <span>가격 출처</span>
@@ -482,9 +482,9 @@
 <div id="tab-open-models" class="tab-panel">
   <div class="price-table-wrap">
     <div class="open-models-note">
-      서버리스 엔드포인트 기준 (AWS Bedrock, Google Cloud Model Garden)<br>
+      서버리스 엔드포인트 기준 (AWS Bedrock, Google Cloud Model Garden, Azure AI Foundry)<br>
       단위: $/MTok · 가격이 낮은 쪽은 <span style="color:var(--green);font-weight:700">초록색</span>으로 표시<br>
-      AWS 가격은 US East (N. Virginia) 기준
+      AWS 가격은 US East (N. Virginia) 기준 · Azure 가격은 Global 기준
     </div>
     <div id="open-models-content"></div>
   </div>
