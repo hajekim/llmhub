@@ -38,6 +38,7 @@ function calcCost(model) {
 }
 
 function fmt(n) {
+  if (n >= 100_000_000) return '💸 비쌈!';
   if (n === 0) return '$0.000';
   if (n < 0.001) return '$' + n.toExponential(2);
   return '$' + n.toFixed(3);
