@@ -5,6 +5,7 @@ const state = {
   outputTokens: 500_000,
   contextMode: 'short',
   activeProviders: new Set(['anthropic', 'openai', 'google', 'xai']),
+  activeFamilies: new Set(),
   showDeprecated: false,
 };
 
@@ -56,6 +57,7 @@ function visibleModels() {
   return [...state.models, ...state.openModelsNormalized].filter(m => {
     if (!state.showDeprecated && m.deprecated) return false;
     if (!state.activeProviders.has(m.provider)) return false;
+    if (m.family && state.activeFamilies.size > 0 && !state.activeFamilies.has(m.family)) return false;
     return true;
   });
 }
@@ -70,33 +72,57 @@ const PROVIDER_LABELS = { anthropic: 'Anthropic', openai: 'OpenAI', google: 'Goo
 const OPEN_FAMILY_LABELS = { meta: 'Meta', mistral: 'Mistral', deepseek: 'DeepSeek', qwen: 'Qwen', gemma: 'Gemma', grok: 'Grok' };
 
 function renderTable() {
-  const models = visibleModels()
+  const sorted = visibleModels()
     .map(m => ({ m, cost: calcCost(m) }))
     .filter(({ cost }) => cost !== null)
     .sort((a, b) => a.cost.totalCost - b.cost.totalCost);
 
+  // 입력·출력 가격이 동일한 모델을 한 행으로 묶음
+  const groups = [];
+  for (const item of sorted) {
+    const last = groups[groups.length - 1];
+    const lc = last?.[0].cost;
+    if (last && lc.inputCost === item.cost.inputCost && lc.outputCost === item.cost.outputCost) {
+      last.push(item);
+    } else {
+      groups.push([item]);
+    }
+  }
+
   const tbody = document.getElementById('model-tbody');
-  tbody.innerHTML = models.map(({ m, cost }, i) => {
-    const rankCell = i < 3
-      ? `<span class="rank rank-${['gold','silver','bronze'][i]}">${RANK_MEDALS[i]}</span>`
-      : `<span class="rank">${i + 1}</span>`;
-    const badge = m.family
-      ? `<span class="badge badge-family-${m.family}">${sanitize(OPEN_FAMILY_LABELS[m.family] ?? m.family)}</span>`
-      : `<span class="badge badge-${m.provider}">${sanitize(PROVIDER_LABELS[m.provider] ?? m.provider)}</span>`;
-    const longBadge = cost.isLongContext ? ' <span class="badge" style="background:rgba(255,184,108,.2);color:#ffb86c">🔺 Long</span>' : '';
-    const depBadge = m.deprecated ? ' <span class="badge" style="background:rgba(255,85,85,.15);color:#ff5555">deprecated</span>' : '';
-    const depClass = m.deprecated ? ' style="opacity:0.55"' : '';
+  let rankOffset = 0;
+  tbody.innerHTML = groups.map(group => {
+    const rankIdx = rankOffset;
+    rankOffset += group.length;
+    const { cost } = group[0];
+    const rankCell = rankIdx < 3
+      ? `<span class="rank rank-${['gold','silver','bronze'][rankIdx]}">${RANK_MEDALS[rankIdx]}</span>`
+      : `<span class="rank">${rankIdx + 1}</span>`;
     const cc = costClass(cost.totalCost);
-    const chatBtn = m.openrouter_id
-      ? `<a class="chat-btn" href="https://openrouter.ai/chat?models=${encodeURIComponent(m.openrouter_id)}" target="_blank" rel="noopener">Chat</a>`
-      : '';
+
+    const modelContent = group.map(({ m, cost: c }) => {
+      const badge = m.family
+        ? `<span class="badge badge-family-${m.family}">${sanitize(OPEN_FAMILY_LABELS[m.family] ?? m.family)}</span>`
+        : `<span class="badge badge-${m.provider}">${sanitize(PROVIDER_LABELS[m.provider] ?? m.provider)}</span>`;
+      const longBadge = c.isLongContext ? ' <span class="badge" style="background:rgba(255,184,108,.2);color:#ffb86c">🔺 Long</span>' : '';
+      const depBadge = m.deprecated ? ' <span class="badge" style="background:rgba(255,85,85,.15);color:#ff5555">deprecated</span>' : '';
+      return `<span class="model-name">${sanitize(m.name)}</span>${badge}${longBadge}${depBadge}`;
+    }).join('<br>');
+
+    const chatBtns = group
+      .map(({ m }) => m.openrouter_id
+        ? `<a class="chat-btn" href="https://openrouter.ai/chat?models=${encodeURIComponent(m.openrouter_id)}" target="_blank" rel="noopener">Chat</a>`
+        : '')
+      .filter(Boolean).join(' ');
+
+    const depClass = group.every(({ m }) => m.deprecated) ? ' style="opacity:0.55"' : '';
     return `<tr${depClass}>
       <td>${rankCell}</td>
-      <td><span class="model-name">${sanitize(m.name)}</span>${badge}${longBadge}${depBadge}</td>
+      <td>${modelContent}</td>
       <td class="cost-neutral">${fmt(cost.inputCost)}</td>
       <td class="cost-neutral">${fmt(cost.outputCost)}</td>
       <td class="${cc}">${fmt(cost.totalCost)}</td>
-      <td>${chatBtn}</td>
+      <td>${chatBtns}</td>
     </tr>`;
   }).join('');
 }
@@ -415,6 +441,30 @@ function toggleProvider(provider) {
   renderAll();
 }
 
+function toggleFamily(family) {
+  if (state.activeFamilies.has(family)) {
+    state.activeFamilies.delete(family);
+  } else {
+    state.activeFamilies.add(family);
+  }
+
+  // 패밀리 선택 여부에 따라 CSP 자동 on/off
+  const cspProviders = ['aws', 'gcp', 'azure'];
+  if (state.activeFamilies.size > 0) {
+    cspProviders.forEach(p => state.activeProviders.add(p));
+  } else {
+    cspProviders.forEach(p => state.activeProviders.delete(p));
+  }
+
+  document.querySelectorAll('.chip[data-family]').forEach(chip => {
+    chip.classList.toggle('chip-off', !state.activeFamilies.has(chip.dataset.family));
+  });
+  document.querySelectorAll('.chip[data-provider]').forEach(chip => {
+    chip.classList.toggle('chip-off', !state.activeProviders.has(chip.dataset.provider));
+  });
+  renderAll();
+}
+
 function toggleDeprecated() {
   state.showDeprecated = !state.showDeprecated;
   const chip = document.getElementById('dep-chip');
@@ -454,6 +504,12 @@ async function init() {
   document.querySelectorAll('.chip[data-provider]').forEach(chip => {
     chip.classList.toggle('chip-off', !state.activeProviders.has(chip.dataset.provider));
     chip.addEventListener('click', () => toggleProvider(chip.dataset.provider));
+  });
+
+  // family chips - 초기에는 모두 비활성 상태로 표시
+  document.querySelectorAll('.chip[data-family]').forEach(chip => {
+    chip.classList.add('chip-off');
+    chip.addEventListener('click', () => toggleFamily(chip.dataset.family));
   });
 
   // deprecated chip
