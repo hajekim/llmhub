@@ -405,10 +405,19 @@ function renderPriceTable() {
   }).join('');
 }
 
+function updateTokenBadges() {
+  const costs = visibleModels().map(m => calcCost(m)).filter(Boolean).map(c => c.totalCost);
+  const minCost = costs.length ? Math.min(...costs) : 0;
+  const bang = isFinite(minCost) && minCost >= 100_000_000;
+  document.getElementById('input-display').textContent  = bang ? '💸 비쌈!' : fmtNum(state.inputTokens);
+  document.getElementById('output-display').textContent = bang ? '💸 비쌈!' : fmtNum(state.outputTokens);
+}
+
 function renderAll() {
   if (!state.models.length) return;
   renderTable();
   updateChart();
+  updateTokenBadges();
 }
 
 function onTokenChange() {
@@ -418,8 +427,6 @@ function onTokenChange() {
   const out = parseInt(rawOutput, 10);
   if (!isNaN(inp) && inp >= 0) state.inputTokens = inp;
   if (!isNaN(out) && out >= 0) state.outputTokens = out;
-  document.getElementById('input-display').textContent = fmtNum(state.inputTokens);
-  document.getElementById('output-display').textContent = fmtNum(state.outputTokens);
   renderAll();
 }
 
@@ -537,8 +544,6 @@ async function init() {
     ]);
     state.models = data.models;
     document.getElementById('last-updated').textContent = '가격 기준일: ' + data.last_updated.slice(0, 10);
-    document.getElementById('input-display').textContent = fmtNum(state.inputTokens);
-    document.getElementById('output-display').textContent = fmtNum(state.outputTokens);
 
     if (openData) {
       openModels = openData.models;
