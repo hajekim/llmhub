@@ -338,9 +338,9 @@ function renderPriceTable() {
       const lc = m.long_context;
       const thr = lc ? `>${Math.round(lc.threshold_tokens / 1000)}K` : null;
       const inputCell  = `$${m.input_price_per_mtok.toFixed(3)}`
-        + (lc ? `<span class="long-ctx-note" style="color:var(--orange)">$${lc.input_price_per_mtok.toFixed(3)} (${thr})</span>` : '');
+        + (lc ? `<span class="long-ctx-note">$${lc.input_price_per_mtok.toFixed(3)}</span><span class="long-ctx-note">(${thr})</span>` : '');
       const outputCell = `$${m.output_price_per_mtok.toFixed(3)}`
-        + (lc ? `<span class="long-ctx-note" style="color:var(--orange)">$${lc.output_price_per_mtok.toFixed(3)} (${thr})</span>` : '');
+        + (lc ? `<span class="long-ctx-note">$${lc.output_price_per_mtok.toFixed(3)}</span><span class="long-ctx-note">(${thr})</span>` : '');
 
       const today = new Date().toISOString().slice(0, 10);
       let shutdownCell = '<span style="color:var(--comment)">—</span>';

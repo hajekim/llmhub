@@ -341,7 +341,7 @@
     .price-ref-table tbody tr:hover { background: var(--hover-bg); }
     .price-ref-table td { padding: 10px 14px; vertical-align: middle; }
     .price-ref-table td:nth-child(n+2) { text-align: right; font-family: 'Roboto Mono', monospace; font-size: 12px; }
-    .long-ctx-note { font-size: 12px; color: var(--orange); display: block; margin-top: 2px; }
+    .long-ctx-note { font-size: 12px; color: var(--orange); display: block; margin-top: 1px; }
     /* OPEN MODELS FAMILY HEADINGS */
     .provider-heading-open-meta     { background: rgba(255,184,108,.15); color: var(--orange); }
     .provider-heading-open-mistral  { background: rgba(255,121,198,.15); color: var(--pink);   }
@@ -511,7 +511,7 @@
 <div id="tab-open-models" class="tab-panel">
   <div class="price-table-wrap">
     <div class="open-models-note">
-      서버리스 엔드포인트 기준 (AWS Bedrock, Google Cloud Model Garden, Azure AI Foundry)<br>
+      서버리스 엔드포인트(On-Demand) 기준 — AWS Bedrock, Google Cloud Vertex AI, Azure AI Foundry<br>
       단위: $/MTok · 가격이 낮은 쪽은 <span style="color:var(--green);font-weight:700">초록색</span>으로 표시<br>
       AWS 가격은 US East (N. Virginia) 기준 · Azure 가격은 Global 기준
     </div>
