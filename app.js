@@ -156,9 +156,9 @@ function switchTab(tab) {
 }
 
 const PROVIDER_ORDER = ['anthropic', 'openai', 'google', 'xai'];
-const PROVIDER_NAMES = { anthropic: 'Anthropic (Claude)', openai: 'OpenAI', google: 'Google (Gemini)', xai: 'xAI (Grok)' };
+const PROVIDER_NAMES = { anthropic: 'Anthropic', openai: 'OpenAI', google: 'Google', xai: 'xAI' };
 
-const OPEN_FAMILY_NAMES = { meta: 'Meta (Llama)', mistral: 'Mistral AI', deepseek: 'DeepSeek', qwen: 'Qwen (Alibaba)', gemma: 'Google (Gemma)', grok: 'xAI (Grok)' };
+const OPEN_FAMILY_NAMES = { meta: 'Meta', mistral: 'Mistral', deepseek: 'DeepSeek', qwen: 'Qwen', gemma: 'Google', grok: 'xAI' };
 const OPEN_FAMILY_ORDER = ['meta', 'mistral', 'deepseek', 'qwen', 'gemma', 'grok'];
 
 let openModels = [];
@@ -185,8 +185,9 @@ function renderOpenModelsTable() {
       const totals = CSP_ORDER
         .map(c => m[c.key] ? { key: c.key, val: m[c.key].input + m[c.key].output } : null)
         .filter(Boolean);
-      const cheapest = totals.length > 1
-        ? totals.reduce((a, b) => a.val < b.val ? a : b).key
+      const minVal = totals.length > 1 ? Math.min(...totals.map(t => t.val)) : null;
+      const cheapest = minVal !== null && totals.filter(t => t.val === minVal).length === 1
+        ? totals.find(t => t.val === minVal).key
         : null;
 
       return CSP_ORDER.map((csp, ci) => {
