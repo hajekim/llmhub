@@ -406,11 +406,11 @@ function renderPriceTable() {
 }
 
 function updateTokenBadges() {
-  const costs = visibleModels().map(m => calcCost(m)).filter(Boolean).map(c => c.totalCost);
-  const minCost = costs.length ? Math.min(...costs) : 0;
-  const bang = isFinite(minCost) && minCost >= 100_000_000;
-  document.getElementById('input-display').textContent  = bang ? '💸 비쌈!' : fmtNum(state.inputTokens);
-  document.getElementById('output-display').textContent = bang ? '💸 비쌈!' : fmtNum(state.outputTokens);
+  const costs = visibleModels().map(m => calcCost(m)).filter(Boolean);
+  const minInput  = costs.length ? Math.min(...costs.map(c => c.inputCost))  : 0;
+  const minOutput = costs.length ? Math.min(...costs.map(c => c.outputCost)) : 0;
+  document.getElementById('input-display').textContent  = minInput  >= 100_000_000 ? '💸 비쌈!' : fmtNum(state.inputTokens);
+  document.getElementById('output-display').textContent = minOutput >= 100_000_000 ? '💸 비쌈!' : fmtNum(state.outputTokens);
 }
 
 function renderAll() {
