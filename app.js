@@ -113,7 +113,7 @@ function renderTable() {
       .map(({ m }) => m.openrouter_id
         ? `<a class="chat-btn" href="https://openrouter.ai/chat?models=${encodeURIComponent(m.openrouter_id)}" target="_blank" rel="noopener">Chat</a>`
         : '')
-      .filter(Boolean).join(' ');
+      .join('<br>');
 
     const depClass = group.every(({ m }) => m.deprecated) ? ' style="opacity:0.55"' : '';
     return `<tr${depClass}>
