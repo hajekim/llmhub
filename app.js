@@ -178,7 +178,7 @@ function renderOpenModelsTable() {
   ];
 
   container.innerHTML = OPEN_FAMILY_ORDER.map(family => {
-    const models = openModels.filter(m => m.family === family);
+    const models = openModels.filter(m => m.family === family).sort(compareModelVersions);
     if (!models.length) return '';
 
     const rows = models.map((m, mi) => {
@@ -451,6 +451,7 @@ async function init() {
 
   // provider chips
   document.querySelectorAll('.chip[data-provider]').forEach(chip => {
+    chip.classList.toggle('chip-off', !state.activeProviders.has(chip.dataset.provider));
     chip.addEventListener('click', () => toggleProvider(chip.dataset.provider));
   });
 
