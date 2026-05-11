@@ -102,24 +102,6 @@
       }
     },
     {
-      "id": "gpt-5-4-nano",
-      "name": "GPT-5.4 Nano",
-      "provider": "openai",
-      "input_price_per_mtok": 0.1,
-      "output_price_per_mtok": 0.01,
-      "deprecated": false,
-      "openrouter_id": "openai/gpt-5.4-nano"
-    },
-    {
-      "id": "gpt-5-4-mini",
-      "name": "GPT-5.4 Mini",
-      "provider": "openai",
-      "input_price_per_mtok": 1.5,
-      "output_price_per_mtok": 0.15,
-      "deprecated": false,
-      "openrouter_id": "openai/gpt-5.4-mini"
-    },
-    {
       "id": "gpt-5-3-codex",
       "name": "GPT-5.3 Codex",
       "provider": "openai",
@@ -133,7 +115,7 @@
       "name": "GPT-5.4",
       "provider": "openai",
       "input_price_per_mtok": 5.0,
-      "output_price_per_mtok": 0.5,
+      "output_price_per_mtok": 22.5,
       "deprecated": false,
       "openrouter_id": "openai/gpt-5.4",
       "long_context": {
@@ -146,8 +128,8 @@
       "id": "gpt-5-5",
       "name": "GPT-5.5",
       "provider": "openai",
-      "input_price_per_mtok": 12.5,
-      "output_price_per_mtok": 1.25,
+      "input_price_per_mtok": 10.0,
+      "output_price_per_mtok": 45.0,
       "deprecated": false,
       "openrouter_id": "openai/gpt-5.5",
       "long_context": {
@@ -160,8 +142,8 @@
       "id": "gpt-5-4-pro",
       "name": "GPT-5.4 Pro",
       "provider": "openai",
-      "input_price_per_mtok": 30.0,
-      "output_price_per_mtok": 180.0,
+      "input_price_per_mtok": 60.0,
+      "output_price_per_mtok": 270.0,
       "deprecated": false,
       "openrouter_id": "openai/gpt-5.4-pro"
     },
@@ -169,8 +151,8 @@
       "id": "gpt-5-5-pro",
       "name": "GPT-5.5 Pro",
       "provider": "openai",
-      "input_price_per_mtok": 30.0,
-      "output_price_per_mtok": 180.0,
+      "input_price_per_mtok": 60.0,
+      "output_price_per_mtok": 270.0,
       "deprecated": false,
       "openrouter_id": "openai/gpt-5.5-pro"
     },
@@ -280,7 +262,7 @@
       "provider": "anthropic",
       "input_price_per_mtok": 15.0,
       "output_price_per_mtok": 75.0,
-      "deprecated": true,
+      "deprecated": false,
       "openrouter_id": "anthropic/claude-opus-4",
       "shutdown_date": "2026-06-15"
     },
@@ -290,7 +272,7 @@
       "provider": "anthropic",
       "input_price_per_mtok": 15.0,
       "output_price_per_mtok": 75.0,
-      "deprecated": true,
+      "deprecated": false,
       "openrouter_id": "anthropic/claude-opus-4.1",
       "shutdown_date": "2026-08-05"
     },
@@ -342,133 +324,37 @@
       "openrouter_id": "x-ai/grok-4.20-multi-agent"
     },
     {
-      "id": "claude-claude-opus-4-7",
-      "name": "Claude Opus 4.7",
-      "provider": "anthropic",
-      "input_price_per_mtok": 5.0,
-      "output_price_per_mtok": 25.0,
-      "deprecated": false
-    },
-    {
-      "id": "claude-claude-opus-4-6",
-      "name": "Claude Opus 4.6",
-      "provider": "anthropic",
-      "input_price_per_mtok": 5.0,
-      "output_price_per_mtok": 25.0,
-      "deprecated": false
-    },
-    {
-      "id": "claude-claude-opus-4-5",
-      "name": "Claude Opus 4.5",
-      "provider": "anthropic",
-      "input_price_per_mtok": 5.0,
-      "output_price_per_mtok": 25.0,
-      "deprecated": false
-    },
-    {
-      "id": "claude-claude-opus-4-1",
-      "name": "Claude Opus 4.1",
-      "provider": "anthropic",
-      "input_price_per_mtok": 15.0,
-      "output_price_per_mtok": 75.0,
-      "deprecated": false
-    },
-    {
-      "id": "claude-claude-opus-4",
-      "name": "Claude Opus 4",
-      "provider": "anthropic",
-      "input_price_per_mtok": 15.0,
-      "output_price_per_mtok": 75.0,
-      "deprecated": false
-    },
-    {
-      "id": "claude-claude-sonnet-4-6",
-      "name": "Claude Sonnet 4.6",
-      "provider": "anthropic",
-      "input_price_per_mtok": 3.0,
-      "output_price_per_mtok": 15.0,
-      "deprecated": false
-    },
-    {
-      "id": "claude-claude-sonnet-4-5",
-      "name": "Claude Sonnet 4.5",
-      "provider": "anthropic",
-      "input_price_per_mtok": 3.0,
-      "output_price_per_mtok": 15.0,
-      "deprecated": false
-    },
-    {
-      "id": "claude-claude-sonnet-4",
-      "name": "Claude Sonnet 4",
-      "provider": "anthropic",
-      "input_price_per_mtok": 3.0,
-      "output_price_per_mtok": 15.0,
-      "deprecated": false
-    },
-    {
-      "id": "claude-claude-sonnet-3-7",
-      "name": "Claude Sonnet 3.7",
-      "provider": "anthropic",
-      "input_price_per_mtok": 3.0,
-      "output_price_per_mtok": 15.0,
-      "deprecated": true
-    },
-    {
-      "id": "claude-claude-haiku-4-5",
-      "name": "Claude Haiku 4.5",
-      "provider": "anthropic",
-      "input_price_per_mtok": 1.0,
-      "output_price_per_mtok": 5.0,
-      "deprecated": false
-    },
-    {
-      "id": "claude-claude-haiku-3-5",
-      "name": "Claude Haiku 3.5",
-      "provider": "anthropic",
-      "input_price_per_mtok": 0.8,
-      "output_price_per_mtok": 4.0,
-      "deprecated": false
-    },
-    {
-      "id": "claude-claude-opus-3",
-      "name": "Claude Opus 3",
-      "provider": "anthropic",
-      "input_price_per_mtok": 15.0,
-      "output_price_per_mtok": 75.0,
-      "deprecated": true
-    },
-    {
-      "id": "claude-claude-haiku-3",
-      "name": "Claude Haiku 3",
-      "provider": "anthropic",
-      "input_price_per_mtok": 0.25,
-      "output_price_per_mtok": 1.25,
-      "deprecated": false
-    },
-    {
-      "id": "text",
-      "name": "Text",
-      "provider": "openai",
-      "input_price_per_mtok": 1.0,
-      "output_price_per_mtok": 0.1,
-      "deprecated": false
-    },
-    {
       "id": "o4-mini-2025-04-16",
       "name": "o4-mini-2025-04-16",
       "provider": "openai",
-      "input_price_per_mtok": 100.0,
-      "output_price_per_mtok": 2.0,
+      "input_price_per_mtok": 4.0,
+      "output_price_per_mtok": 16.0,
       "deprecated": false
     },
     {
-      "id": "o4-mini-2025-04-16with-data-sharing",
-      "name": "o4-mini-2025-04-16with data sharing",
+      "id": "o4-mini-2025-04-16-with-data-sharing",
+      "name": "o4-mini-2025-04-16 with data sharing",
       "provider": "openai",
-      "input_price_per_mtok": 100.0,
-      "output_price_per_mtok": 1.0,
+      "input_price_per_mtok": 2.0,
+      "output_price_per_mtok": 8.0,
+      "deprecated": false
+    },
+    {
+      "id": "gpt-5-4-mini",
+      "name": "gpt-5.4-mini",
+      "provider": "openai",
+      "input_price_per_mtok": 0.75,
+      "output_price_per_mtok": 4.5,
+      "deprecated": false
+    },
+    {
+      "id": "gpt-5-4-nano",
+      "name": "gpt-5.4-nano",
+      "provider": "openai",
+      "input_price_per_mtok": 0.2,
+      "output_price_per_mtok": 1.25,
       "deprecated": false
     }
   ],
-  "last_updated": "2026-05-11T10:23:00Z"
+  "last_updated": "2026-05-11T10:54:33Z"
 }

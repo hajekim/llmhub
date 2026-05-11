@@ -51,7 +51,7 @@ def scrape_anthropic() -> list[dict]:
         return []
 
     soup = BeautifulSoup(resp.text, "html.parser")
-    models = []
+    models_by_name: dict[str, dict] = {}  # 테이블이 여러 개여도 이름 기준 중복 제거
 
     for table in soup.find_all("table"):
         headers = [th.get_text(strip=True) for th in table.find_all("th")]
@@ -62,21 +62,25 @@ def scrape_anthropic() -> list[dict]:
             if len(cells) < 3:
                 continue
             name = cells[0].replace(" (deprecated)", "").strip()
-            deprecated = "deprecated" in cells[0].lower()
-            input_price  = parse_price(cells[1])
-            output_price = parse_price(cells[-1])
-            if not name or input_price is None or output_price is None:
+            if not name or name in models_by_name:
                 continue
-            model_id = "claude-" + re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-")
-            models.append({
+            deprecated = "deprecated" in cells[0].lower()
+            input_price = parse_price(cells[1])
+            output_price = parse_price(cells[-1])
+            if input_price is None or output_price is None:
+                continue
+            # "Claude Opus 4.7" → "claude-opus-4-7" (claude- 이중 접두사 방지)
+            model_id = re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-")
+            models_by_name[name] = {
                 "id": model_id,
                 "name": name,
                 "provider": "anthropic",
                 "input_price_per_mtok": input_price,
                 "output_price_per_mtok": output_price,
                 "deprecated": deprecated,
-            })
+            }
 
+    models = list(models_by_name.values())
     print(f"[Anthropic] {len(models)} models")
     return models
 
@@ -92,41 +96,94 @@ def scrape_openai() -> list[dict]:
         return []
 
     soup = BeautifulSoup(resp.text, "html.parser")
-    models = []
+    models_by_name: dict[str, dict] = {}
 
-    SKIP_KEYWORDS = {"realtime", "audio", "image", "video", "sora", "transcribe", "tts", "whisper"}
+    SKIP_KEYWORDS = {"realtime", "audio", "image", "video", "sora", "transcribe", "tts", "whisper", "search"}
 
     for table in soup.find_all("table"):
-        headers_text = table.get_text().lower()
-        if "input" not in headers_text or "output" not in headers_text:
+        headers = [th.get_text(strip=True).lower() for th in table.find_all("th")]
+        if not any("input" in h for h in headers) or not any("output" in h for h in headers):
             continue
+
+        # Short/Long Context 분리 테이블 감지
+        # 헤더: ['', 'short context', 'long context', 'model', 'input', 'cached input', 'output', ...]
+        # 데이터 셀: [name, sc_input, sc_cached, sc_output, lc_input, lc_cached, lc_output]
+        has_short_long = any("short context" in h for h in headers) and any("long context" in h for h in headers)
+
+        if has_short_long:
+            for row in table.find_all("tr")[1:]:
+                cells = [td.get_text(separator=" ", strip=True) for td in row.find_all("td")]
+                if len(cells) < 4:
+                    continue
+                name = cells[0].strip()
+                if not name or not any(c.isdigit() for c in name):
+                    continue
+                if any(kw in name.lower() for kw in SKIP_KEYWORDS):
+                    continue
+                if name in models_by_name:
+                    continue
+                # Long Context 가격 우선, 없으면 Short Context로 fallback
+                if len(cells) >= 7 and parse_price(cells[4]) is not None and parse_price(cells[6]) is not None:
+                    input_price  = parse_price(cells[4])
+                    output_price = parse_price(cells[6])
+                else:
+                    input_price  = parse_price(cells[1])
+                    output_price = parse_price(cells[3])
+                if input_price is None or output_price is None:
+                    continue
+                model_id = re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-")
+                models_by_name[name] = {
+                    "id": model_id,
+                    "name": name,
+                    "provider": "openai",
+                    "input_price_per_mtok": input_price,
+                    "output_price_per_mtok": output_price,
+                    "deprecated": False,
+                }
+            continue
+
+        # 일반 테이블: 헤더에서 입력/출력 컬럼 위치 감지
+        input_col  = next((i for i, h in enumerate(headers) if "input"  in h), 1)
+        output_col = next((i for i, h in enumerate(headers) if "output" in h), 2)
+
         for row in table.find_all("tr")[1:]:
-            cells = [td.get_text(strip=True) for td in row.find_all("td")]
-            if len(cells) < 3:
+            # separator=' ' 로 셀 내부 요소 사이에 공백 삽입 (예: "o4-mini\nwith data sharing" → 올바른 이름)
+            cells = [td.get_text(separator=" ", strip=True) for td in row.find_all("td")]
+            if len(cells) <= max(input_col, output_col):
                 continue
+
             name = cells[0].strip()
+            # 버전 숫자 없는 이름은 섹션 헤더 등 비모델 행 (예: "Text", "Responses")
+            if not name or not any(c.isdigit() for c in name):
+                continue
             if any(kw in name.lower() for kw in SKIP_KEYWORDS):
                 continue
-            input_price  = parse_price(cells[1])
-            output_price = parse_price(cells[2])
-            if not name or input_price is None or output_price is None:
+            if name in models_by_name:
                 continue
+
+            input_price  = parse_price(cells[input_col])
+            output_price = parse_price(cells[output_col])
+            if input_price is None or output_price is None:
+                continue
+
             model_id = re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-")
-            models.append({
+            models_by_name[name] = {
                 "id": model_id,
                 "name": name,
                 "provider": "openai",
                 "input_price_per_mtok": input_price,
                 "output_price_per_mtok": output_price,
                 "deprecated": False,
-            })
+            }
 
+    models = list(models_by_name.values())
     print(f"[OpenAI] {len(models)} models")
     return models
 
 
 def scrape_google() -> list[dict]:
-    """Google 가격 페이지에서 Gemini 모델 파싱."""
+    """Google 가격 페이지에서 Gemini 모델 파싱.
+    Google 페이지는 JS 렌더링 의존도가 높아 파싱 실패 시 기존 데이터를 유지한다."""
     url = "https://cloud.google.com/gemini-enterprise-agent-platform/generative-ai/pricing"
     try:
         resp = requests.get(url, headers=HEADERS, timeout=20)
@@ -136,54 +193,72 @@ def scrape_google() -> list[dict]:
         return []
 
     soup = BeautifulSoup(resp.text, "html.parser")
-    models = []
+    models_by_name: dict[str, dict] = {}
     SKIP_KEYWORDS = {"audio", "video", "image", "grounding", "gemma"}
 
     for table in soup.find_all("table"):
-        headers_text = table.get_text().lower()
-        if "input" not in headers_text or "output" not in headers_text:
+        headers = [th.get_text(strip=True).lower() for th in table.find_all("th")]
+        if not any("input" in h for h in headers) or not any("output" in h for h in headers):
             continue
+
+        input_col  = next((i for i, h in enumerate(headers) if "input"  in h), 1)
+        output_col = next((i for i, h in enumerate(headers) if "output" in h), 2)
+
         for row in table.find_all("tr")[1:]:
-            cells = [td.get_text(strip=True) for td in row.find_all("td")]
-            if len(cells) < 3:
+            cells = [td.get_text(separator=" ", strip=True) for td in row.find_all("td")]
+            if len(cells) <= max(input_col, output_col):
                 continue
             name = cells[0].strip()
             if not name.lower().startswith("gemini"):
                 continue
             if any(kw in name.lower() for kw in SKIP_KEYWORDS):
                 continue
-            input_price  = parse_price(cells[1])
-            output_price = parse_price(cells[2])
+            if name in models_by_name:
+                continue
+            input_price  = parse_price(cells[input_col])
+            output_price = parse_price(cells[output_col])
             if input_price is None or output_price is None:
                 continue
             model_id = re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-")
-            models.append({
+            models_by_name[name] = {
                 "id": model_id,
                 "name": name,
                 "provider": "google",
                 "input_price_per_mtok": input_price,
                 "output_price_per_mtok": output_price,
                 "deprecated": False,
-            })
+            }
 
-    print(f"[Google] {len(models)} models")
+    models = list(models_by_name.values())
+    if not models:
+        print("[WARN] Google: 0 models (JS 렌더링 페이지 — 기존 데이터 유지)", file=sys.stderr)
+    else:
+        print(f"[Google] {len(models)} models")
     return models
 
 
 def merge(existing: dict, scraped: list[dict]) -> tuple[dict, list[str]]:
     """
     스크래핑 결과를 기존 데이터와 병합.
-    - 기존에 있는 모델은 가격만 업데이트 (long_context 필드 유지)
-    - 새 모델은 추가
-    - 스크래핑에서 사라진 모델은 유지 (수동 삭제만 가능)
-    변경 내역 문자열 리스트를 함께 반환.
+    - ID 우선 매칭, 없으면 이름으로 fallback (ID 형식 변경 시 중복 방지)
+    - 기존에 있는 모델은 가격만 업데이트 (long_context 등 수동 필드 유지)
+    - 새 모델은 추가, 사라진 모델은 유지 (수동 삭제만 가능)
     """
     existing_map = {m["id"]: m for m in existing.get("models", [])}
+    existing_by_name = {m["name"]: m["id"] for m in existing.get("models", [])}
     changes = []
 
     for m in scraped:
-        if m["id"] in existing_map:
-            old = existing_map[m["id"]]
+        matched_id = m["id"]
+
+        # ID 불일치 시 이름으로 fallback (ID 형식 버그 수정 후 중복 생성 방지)
+        if matched_id not in existing_map and m["name"] in existing_by_name:
+            old_id = existing_by_name[m["name"]]
+            existing_map[m["id"]] = existing_map.pop(old_id)
+            existing_by_name[m["name"]] = m["id"]
+
+        if matched_id in existing_map:
+            old = existing_map[matched_id]
             diffs = []
             for field, label in [
                 ("input_price_per_mtok",  "입력"),
@@ -197,7 +272,8 @@ def merge(existing: dict, scraped: list[dict]) -> tuple[dict, list[str]]:
                     diffs.append(f"{label} ${old_val:.3f}→${new_val:.3f} ({arrow}{abs(pct):.1f}%)")
             if diffs:
                 changes.append(f"  {m['name']}: {', '.join(diffs)}")
-            existing_map[m["id"]].update({
+            existing_map[matched_id].update({
+                "id": m["id"],
                 "input_price_per_mtok":  m["input_price_per_mtok"],
                 "output_price_per_mtok": m["output_price_per_mtok"],
                 "deprecated": m["deprecated"],
@@ -223,8 +299,7 @@ def main():
 
     if changes:
         save(merged)
-        # 워크플로우가 읽을 변경 요약 파일 생성
-        summary_path = Path(__file__).parent.parent / "price_changes.txt"
+        summary_path = ROOT / "price_changes.txt"
         summary_path.write_text("\n".join(changes), encoding="utf-8")
         print(f"[변경] {len(changes)}건:\n" + "\n".join(changes))
     else:
