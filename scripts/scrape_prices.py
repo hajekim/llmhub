@@ -104,6 +104,9 @@ def scrape_openai() -> list[dict]:
         headers = [th.get_text(strip=True).lower() for th in table.find_all("th")]
         if not any("input" in h for h in headers) or not any("output" in h for h in headers):
             continue
+        # Training/fine-tuning 테이블 제외 (chat 모델 아님)
+        if any("training" in h for h in headers):
+            continue
 
         # Short/Long Context 분리 테이블 감지
         # 헤더: ['', 'short context', 'long context', 'model', 'input', 'cached input', 'output', ...]
