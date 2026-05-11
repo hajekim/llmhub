@@ -28,12 +28,8 @@ jobs:
         run: |
           if [ -f price_changes.txt ]; then
             echo "changed=true" >> $GITHUB_OUTPUT
-            delim="$(openssl rand -hex 8)"
-            {
-              echo "summary<<${delim}"
-              cat price_changes.txt
-              echo "${delim}"
-            } >> $GITHUB_OUTPUT
+            echo "### 가격 변동 내역" >> $GITHUB_STEP_SUMMARY
+            cat price_changes.txt >> $GITHUB_STEP_SUMMARY
           else
             echo "changed=false" >> $GITHUB_OUTPUT
           fi
