@@ -40,6 +40,18 @@ def parse_price(text: str) -> float | None:
     return float(m.group(1)) if m else None
 
 
+def normalize_openai_name(raw: str) -> str:
+    """페이지 원본 이름을 표시용으로 변환. 'gpt-5.4-mini' → 'GPT-5.4 Mini'
+    이미 정규화된 이름('GPT-5.5')은 소문자 'gpt-'로 시작하지 않으므로 그대로 반환."""
+    if not raw.startswith("gpt-"):
+        return raw
+    m = re.match(r"(\d+\.\d+(?:\.\d+)?)(.*)", raw[4:])
+    if m:
+        version, rest = m.group(1), m.group(2).lstrip("- ")
+        return f"GPT-{version}" + (f" {rest.replace('-', ' ').title()}" if rest else "")
+    return raw
+
+
 def scrape_anthropic() -> list[dict]:
     """Anthropic 가격 페이지에서 Claude 모델 파싱."""
     url = "https://platform.claude.com/docs/en/about-claude/pricing"
@@ -118,11 +130,12 @@ def scrape_openai() -> list[dict]:
                 cells = [td.get_text(separator=" ", strip=True) for td in row.find_all("td")]
                 if len(cells) < 4:
                     continue
-                name = cells[0].strip()
-                if not name or not any(c.isdigit() for c in name):
+                raw_name = cells[0].strip()
+                if not raw_name or not any(c.isdigit() for c in raw_name):
                     continue
-                if any(kw in name.lower() for kw in SKIP_KEYWORDS):
+                if any(kw in raw_name.lower() for kw in SKIP_KEYWORDS):
                     continue
+                name = normalize_openai_name(raw_name)
                 if name in models_by_name:
                     continue
                 # Long Context 가격 우선, 없으면 Short Context로 fallback
@@ -155,12 +168,13 @@ def scrape_openai() -> list[dict]:
             if len(cells) <= max(input_col, output_col):
                 continue
 
-            name = cells[0].strip()
+            raw_name = cells[0].strip()
             # 버전 숫자 없는 이름은 섹션 헤더 등 비모델 행 (예: "Text", "Responses")
-            if not name or not any(c.isdigit() for c in name):
+            if not raw_name or not any(c.isdigit() for c in raw_name):
                 continue
-            if any(kw in name.lower() for kw in SKIP_KEYWORDS):
+            if any(kw in raw_name.lower() for kw in SKIP_KEYWORDS):
                 continue
+            name = normalize_openai_name(raw_name)
             if name in models_by_name:
                 continue
 
