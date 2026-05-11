@@ -28,10 +28,11 @@ jobs:
         run: |
           if [ -f price_changes.txt ]; then
             echo "changed=true" >> $GITHUB_OUTPUT
+            delim="$(openssl rand -hex 8)"
             {
-              echo "summary<<EOF"
+              echo "summary<<${delim}"
               cat price_changes.txt
-              echo "EOF"
+              echo "${delim}"
             } >> $GITHUB_OUTPUT
           else
             echo "changed=false" >> $GITHUB_OUTPUT
