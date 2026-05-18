@@ -183,7 +183,7 @@
       "provider": "anthropic",
       "input_price_per_mtok": 3.0,
       "output_price_per_mtok": 15.0,
-      "deprecated": false,
+      "deprecated": true,
       "openrouter_id": "anthropic/claude-sonnet-4",
       "shutdown_date": "2026-06-15"
     },
@@ -253,7 +253,7 @@
       "provider": "anthropic",
       "input_price_per_mtok": 15.0,
       "output_price_per_mtok": 75.0,
-      "deprecated": false,
+      "deprecated": true,
       "openrouter_id": "anthropic/claude-opus-4",
       "shutdown_date": "2026-06-15"
     },
@@ -331,7 +331,15 @@
       "output_price_per_mtok": 1.25,
       "deprecated": false,
       "openrouter_id": "openai/gpt-5.4-nano"
+    },
+    {
+      "id": "claude-haiku-3-5-retired-except-on-bedrock-and-vertex-ai",
+      "name": "Claude Haiku 3.5 (retired, except on Bedrock and Vertex AI)",
+      "provider": "anthropic",
+      "input_price_per_mtok": 0.8,
+      "output_price_per_mtok": 4.0,
+      "deprecated": false
     }
   ],
-  "last_updated": "2026-05-11T10:54:33Z"
+  "last_updated": "2026-05-18T04:11:59Z"
 }
