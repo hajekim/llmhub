@@ -202,7 +202,7 @@ def scrape_openai() -> list[dict]:
 
 def scrape_google() -> list[dict]:
     """Google 가격 페이지에서 Gemini 모델 파싱.
-    Google 페이지는 JS 렌더링 의존도가 높아 파싱 실패 시 기존 데이터를 유지한다."""
+    페이지 구조: 모델명 행(셀 1개) → Input/Output 타입 행(셀 여러 개) 반복."""
     url = "https://cloud.google.com/gemini-enterprise-agent-platform/generative-ai/pricing"
     try:
         resp = requests.get(url, headers=HEADERS, timeout=20)
@@ -213,44 +213,71 @@ def scrape_google() -> list[dict]:
 
     soup = BeautifulSoup(resp.text, "html.parser")
     models_by_name: dict[str, dict] = {}
-    SKIP_KEYWORDS = {"audio", "video", "image", "grounding", "gemma"}
+    SKIP_KEYWORDS = {"audio", "image", "grounding", "gemma", "live", "translate", "computer use"}
 
     for table in soup.find_all("table"):
         headers = [th.get_text(strip=True).lower() for th in table.find_all("th")]
-        if not any("input" in h for h in headers) or not any("output" in h for h in headers):
+        # Model/Type 구조 테이블만 처리 (Google 고유 형식)
+        if not any("model" in h for h in headers) or not any("type" in h for h in headers):
+            continue
+        if "gemini" not in table.get_text().lower():
             continue
 
-        input_col  = next((i for i, h in enumerate(headers) if "input"  in h), 1)
-        output_col = next((i for i, h in enumerate(headers) if "output" in h), 2)
+        current_name: str | None = None
+        current_input: float | None = None
+        current_output: float | None = None
 
         for row in table.find_all("tr")[1:]:
             cells = [td.get_text(separator=" ", strip=True) for td in row.find_all("td")]
-            if len(cells) <= max(input_col, output_col):
+            if not cells:
                 continue
-            name = cells[0].strip()
-            if not name.lower().startswith("gemini"):
-                continue
-            if any(kw in name.lower() for kw in SKIP_KEYWORDS):
-                continue
-            if name in models_by_name:
-                continue
-            input_price  = parse_price(cells[input_col])
-            output_price = parse_price(cells[output_col])
-            if input_price is None or output_price is None:
-                continue
-            model_id = re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-")
-            models_by_name[name] = {
+
+            if len(cells) == 1:
+                # 모델명 행: 직전 모델 저장 후 새 모델 시작
+                if current_name and current_input and current_output:
+                    if current_name not in models_by_name:
+                        model_id = re.sub(r"[^a-z0-9]+", "-", current_name.lower()).strip("-")
+                        models_by_name[current_name] = {
+                            "id": model_id,
+                            "name": current_name,
+                            "provider": "google",
+                            "input_price_per_mtok": current_input,
+                            "output_price_per_mtok": current_output,
+                            "deprecated": False,
+                        }
+                name = cells[0].strip()
+                if name.lower().startswith("gemini") and not any(kw in name.lower() for kw in SKIP_KEYWORDS):
+                    current_name = name
+                    current_input = None
+                    current_output = None
+                else:
+                    current_name = None
+            elif current_name and len(cells) >= 2:
+                row_type = cells[0].lower()
+                price = parse_price(cells[1])
+                if price is None:
+                    continue
+                # text input만 수집 (audio/image/video 제외)
+                if "input" in row_type and "text" in row_type and current_input is None:
+                    current_input = price
+                elif "text output" in row_type and current_output is None:
+                    current_output = price
+
+        # 마지막 모델 저장
+        if current_name and current_input and current_output and current_name not in models_by_name:
+            model_id = re.sub(r"[^a-z0-9]+", "-", current_name.lower()).strip("-")
+            models_by_name[current_name] = {
                 "id": model_id,
-                "name": name,
+                "name": current_name,
                 "provider": "google",
-                "input_price_per_mtok": input_price,
-                "output_price_per_mtok": output_price,
+                "input_price_per_mtok": current_input,
+                "output_price_per_mtok": current_output,
                 "deprecated": False,
             }
 
     models = list(models_by_name.values())
     if not models:
-        print("[WARN] Google: 0 models (JS 렌더링 페이지 — 기존 데이터 유지)", file=sys.stderr)
+        print("[WARN] Google: 0 models — 기존 데이터 유지", file=sys.stderr)
     else:
         print(f"[Google] {len(models)} models")
     return models
