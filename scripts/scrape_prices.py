@@ -6,9 +6,10 @@ LLMHub 가격 스크래퍼.
 """
 
 import json
+import os
 import re
 import sys
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
 import requests
@@ -333,12 +334,115 @@ def merge(existing: dict, scraped: list[dict]) -> tuple[dict, list[str]]:
     return {"models": list(existing_map.values())}, changes
 
 
+def _changes_to_table(changes: list[str]) -> str:
+    """merge()가 반환한 변동 문자열 목록을 마크다운 테이블로 변환."""
+    rows = []
+    for line in changes:
+        line = line.strip()
+        m = re.match(r"(.+?) \[신규\] 입력 \$([0-9.]+) / 출력 \$([0-9.]+)", line)
+        if m:
+            rows.append(
+                f"| {m.group(1)} | 신규 | — | ${m.group(2)} / ${m.group(3)} | — |"
+            )
+            continue
+        name_m = re.match(r"(.+?):\s+(.+)", line)
+        if name_m:
+            model_name = name_m.group(1)
+            for diff in name_m.group(2).split(", "):
+                dm = re.match(
+                    r"(입력|출력) \$([0-9.]+)→\$([0-9.]+) \(([↑↓][0-9.]+%)\)", diff.strip()
+                )
+                if dm:
+                    rows.append(
+                        f"| {model_name} | {dm.group(1)} | ${dm.group(2)} | ${dm.group(3)} | {dm.group(4)} |"
+                    )
+    if not rows:
+        return ""
+    return (
+        "\n### 변동 내역\n\n"
+        "| 모델 | 구분 | 이전 | 이후 | 변동률 |\n"
+        "|------|------|-----:|-----:|-------:|\n"
+        + "\n".join(rows) + "\n"
+    )
+
+
+def write_history(before_sha: str, counts: dict, changes: list[str], data: dict, success: bool) -> None:
+    """HISTORY.md에 실행 결과를 맨 위에 prepend."""
+    KST = timezone(timedelta(hours=9))
+    now = datetime.now(KST)
+    weekdays = ["월", "화", "수", "목", "금", "토", "일"]
+    date_str = now.strftime(f"%Y-%m-%d ({weekdays[now.weekday()]}) %H:%M KST")
+
+    status = "성공" if success else "실패"
+    total = sum(counts.values())
+    display = {"anthropic": "Anthropic", "openai": "OpenAI", "google": "Google"}
+    counts_str = " · ".join(f"{display.get(p, p)} {n}개" for p, n in counts.items())
+    change_label = f"{len(changes)}건" if changes else "없음"
+
+    changes_md = _changes_to_table(changes)
+
+    provider_order = {"anthropic": 0, "google": 1, "openai": 2}
+    models = sorted(
+        data.get("models", []),
+        key=lambda m: (provider_order.get(m["provider"], 9), m["name"]),
+    )
+    snapshot_rows = "\n".join(
+        f"| {display.get(m['provider'], m['provider'])} | {m['name']} "
+        f"| ${m['input_price_per_mtok']:.3f} | ${m['output_price_per_mtok']:.3f} "
+        f"| {'deprecated' if m.get('deprecated') else ''} |"
+        for m in models
+    )
+    snapshot_md = (
+        "\n### 전체 가격 스냅샷\n\n"
+        "| 제공사 | 모델 | 입력 ($/MTok) | 출력 ($/MTok) | 비고 |\n"
+        "|--------|------|-------------:|-------------:|------|\n"
+        + snapshot_rows + "\n"
+    )
+
+    entry = (
+        f"## {date_str}\n\n"
+        f"**실행 상태:** {status}  \n"
+        f"**이전 커밋:** `{before_sha}` — 롤백: `git checkout {before_sha} -- prices.json`  \n"
+        f"**수집 현황:** {counts_str} (총 {total}개)  \n"
+        f"**가격 변동:** {change_label}\n"
+        f"{changes_md}{snapshot_md}\n---\n"
+    )
+
+    HEADER = (
+        "# LLMHub 가격 수집 이력\n\n"
+        "자동화된 월간 스크래핑 실행 결과를 기록합니다.  \n"
+        "잘못 수집된 데이터 발견 시 각 항목의 롤백 명령어를 사용하세요.\n\n"
+        "---\n"
+    )
+
+    history_file = ROOT / "HISTORY.md"
+    if history_file.exists():
+        existing = history_file.read_text(encoding="utf-8")
+        marker = "---\n"
+        idx = existing.find(marker)
+        if idx != -1:
+            new_content = existing[: idx + len(marker)] + "\n" + entry + existing[idx + len(marker):]
+        else:
+            new_content = HEADER + "\n" + entry
+    else:
+        new_content = HEADER + "\n" + entry
+
+    history_file.write_text(new_content, encoding="utf-8")
+    print(f"[OK] HISTORY.md 갱신 ({date_str})")
+
+
 def main():
+    before_sha = os.environ.get("BEFORE_SHA", "unknown")
     existing = load_existing()
-    scraped  = scrape_anthropic() + scrape_openai() + scrape_google()
+    counts = {}
+    anthropic = scrape_anthropic(); counts["anthropic"] = len(anthropic)
+    openai    = scrape_openai();    counts["openai"]    = len(openai)
+    google    = scrape_google();    counts["google"]    = len(google)
+    scraped   = anthropic + openai + google
 
     if not scraped:
         print("[ERROR] 모든 스크래퍼 실패 — prices.json 유지", file=sys.stderr)
+        write_history(before_sha, counts, [], existing, success=False)
         sys.exit(1)
 
     merged, changes = merge(existing, scraped)
@@ -350,6 +454,8 @@ def main():
         print(f"[변경] {len(changes)}건:\n" + "\n".join(changes))
     else:
         print("[변경 없음] prices.json 유지")
+
+    write_history(before_sha, counts, changes, merged, success=True)
 
 
 if __name__ == "__main__":
