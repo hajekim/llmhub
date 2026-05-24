@@ -73,10 +73,12 @@ def scrape_anthropic() -> list[dict]:
             cells = [td.get_text(strip=True) for td in row.find_all("td")]
             if len(cells) < 3:
                 continue
-            name = cells[0].replace(" (deprecated)", "").strip()
+            raw = cells[0]
+            # "(deprecated)", "(retired, ...)" 등 퇴역 표기 제거 후 이름 정규화
+            name = re.sub(r"\s*\((?:deprecated|retired)[^)]*\)", "", raw, flags=re.IGNORECASE).strip()
             if not name or name in models_by_name:
                 continue
-            deprecated = "deprecated" in cells[0].lower()
+            deprecated = bool(re.search(r"\((?:deprecated|retired)", raw, re.IGNORECASE))
             input_price = parse_price(cells[1])
             output_price = parse_price(cells[-1])
             if input_price is None or output_price is None:
