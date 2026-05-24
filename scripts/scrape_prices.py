@@ -374,7 +374,7 @@ def write_history(before_sha: str, counts: dict, changes: list[str], data: dict,
     date_str = now.strftime(f"%Y-%m-%d ({weekdays[now.weekday()]}) %H:%M KST")
 
     status = "성공" if success else "실패"
-    total = sum(counts.values())
+    total = len(data.get("models", []))
     display = {"anthropic": "Anthropic", "openai": "OpenAI", "google": "Google"}
     counts_str = " · ".join(f"{display.get(p, p)} {n}개" for p, n in counts.items())
     change_label = f"{len(changes)}건" if changes else "없음"
