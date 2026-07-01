@@ -263,7 +263,7 @@
       "provider": "anthropic",
       "input_price_per_mtok": 15.0,
       "output_price_per_mtok": 75.0,
-      "deprecated": false,
+      "deprecated": true,
       "openrouter_id": "anthropic/claude-opus-4.1",
       "shutdown_date": "2026-08-05"
     },
@@ -355,7 +355,47 @@
       "input_price_per_mtok": 30.0,
       "output_price_per_mtok": 150.0,
       "deprecated": false
+    },
+    {
+      "id": "claude-fable-5",
+      "name": "Claude Fable 5",
+      "provider": "anthropic",
+      "input_price_per_mtok": 10.0,
+      "output_price_per_mtok": 50.0,
+      "deprecated": false
+    },
+    {
+      "id": "claude-mythos-5-limited-availability",
+      "name": "Claude Mythos 5 (limited availability)",
+      "provider": "anthropic",
+      "input_price_per_mtok": 10.0,
+      "output_price_per_mtok": 50.0,
+      "deprecated": false
+    },
+    {
+      "id": "claude-sonnet-5through-august-31-2026",
+      "name": "Claude Sonnet 5through August 31, 2026",
+      "provider": "anthropic",
+      "input_price_per_mtok": 2.0,
+      "output_price_per_mtok": 10.0,
+      "deprecated": false
+    },
+    {
+      "id": "claude-sonnet-5starting-september-1-2026",
+      "name": "Claude Sonnet 5starting September 1, 2026",
+      "provider": "anthropic",
+      "input_price_per_mtok": 3.0,
+      "output_price_per_mtok": 15.0,
+      "deprecated": false
+    },
+    {
+      "id": "gemini-omni-flash",
+      "name": "Gemini Omni Flash",
+      "provider": "google",
+      "input_price_per_mtok": 1.5,
+      "output_price_per_mtok": 9.0,
+      "deprecated": false
     }
   ],
-  "last_updated": "2026-06-01T06:02:32Z"
+  "last_updated": "2026-07-01T05:21:20Z"
 }
