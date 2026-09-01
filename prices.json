@@ -416,8 +416,8 @@
       "id": "gpt-5-6-sol",
       "name": "GPT-5.6 Sol",
       "provider": "openai",
-      "input_price_per_mtok": 30.0,
-      "output_price_per_mtok": 1.0,
+      "input_price_per_mtok": 20.0,
+      "output_price_per_mtok": 0.8,
       "deprecated": false
     },
     {
@@ -451,7 +451,23 @@
       "input_price_per_mtok": 0.3,
       "output_price_per_mtok": 2.5,
       "deprecated": false
+    },
+    {
+      "id": "claude-sonnet-5",
+      "name": "Claude Sonnet 5",
+      "provider": "anthropic",
+      "input_price_per_mtok": 2.0,
+      "output_price_per_mtok": 10.0,
+      "deprecated": false
+    },
+    {
+      "id": "gpt-5-6-cyber",
+      "name": "GPT-5.6 Cyber",
+      "provider": "openai",
+      "input_price_per_mtok": 12.5,
+      "output_price_per_mtok": 15.625,
+      "deprecated": false
     }
   ],
-  "last_updated": "2026-08-01T04:20:24Z"
+  "last_updated": "2026-09-01T06:02:30Z"
 }
